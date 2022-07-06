@@ -36,6 +36,13 @@
 *.x86_64
 *.hex
 
+# ARM-MDK Ide
+*.crf
+*.htm
+*.Inp
+*.axf
+*.dep
+
 # Debug files
 *.dSYM/
 *.su
