@@ -338,7 +338,7 @@
               <MiscControls>--diag_suppress=1295</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>..\drivers;..\drivers\CMSIS\Core\Include;..\drivers\CMSIS\Include;..\drivers\CMSIS\Device\ST\STM32F1xx\Include;..\drivers\STM32F1xx_HAL_Driver\Inc;..\drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\main</IncludePath>
+              <IncludePath>..\drivers;..\drivers\CMSIS\Core\Include;..\drivers\CMSIS\Include;..\drivers\CMSIS\Device\ST\STM32F1xx\Include;..\drivers\STM32F1xx_HAL_Driver\Inc;..\drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\main;..\MPU6050</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,11 +491,6 @@
               <FileName>stm32f1xx_hal_mmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_mmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_msp_template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_msp_template.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_hal_nand.c</FileName>
@@ -716,6 +711,26 @@
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\main\stm32f1xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\main\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MPU6050</GroupName>
+          <Files>
+            <File>
+              <FileName>MPU6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MPU6050\MPU6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>MPU6050_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MPU6050\MPU6050_I2C.c</FilePath>
             </File>
           </Files>
         </Group>

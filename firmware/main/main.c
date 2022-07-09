@@ -1,11 +1,15 @@
 
 #include "stm32f1xx_hal.h"
 #include "time.h"
+#include "MPU6050.h"
+#include "usart.h"
 
 /* TIM handle declaration */
 TIM_HandleTypeDef    TimHandle;
 TIM_HandleTypeDef    TimHandle2;
 __IO uint16_t cnt = 255;
+int16_t AccelGyro[6]={ 0 };
+extern unsigned char aRxBuffer[];
 
 void SystemClock_Config(void);
 static void Error_Handler(void);
@@ -16,7 +20,10 @@ int main()
 {
     HAL_Init();
     SystemClock_Config();
-
+#if 0
+    MPU6050_Initialize();
+#endif
+    usart_init();
     /***********************************************
      *            TIM2 CONFIG
      **********************************************/
@@ -80,6 +87,18 @@ int main()
         cnt--;
         if (cnt <= 50)
             cnt = 50;
+#if 0
+        MPU6050_GetRawAccelGyro(AccelGyro);
+        uint16_t a = AccelGyro[0];
+        uint16_t b = AccelGyro[1];
+        uint16_t c = AccelGyro[2];
+        uint16_t d = AccelGyro[3];
+        uint16_t e = AccelGyro[4];
+        uint16_t f = AccelGyro[5];
+#endif
+        // usart_send_string("Hello, MiNiBot!!!");
+        // usart_send_fmt_string("MiNiBot:%d", 2010);
+        // usart_send_string(aRxBuffer);
     }
     return 0;
 }

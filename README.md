@@ -141,14 +141,5 @@ static void pwm2_gpio_init()
     GPIO_InitStruct.Pull = GPIO_PULLUP;           // 上拉
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // 高速
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    __HAL_RCC_GPIOB_CLK_ENABLE();                // 开启 GPIOC 时钟
-
-    // GPIO_InitTypeDef GPIO_InitStruct = {0};       // 结构体
-    GPIO_InitStruct.Pin = GPIO_PIN_9;            // PC13
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP/*GPIO_MODE_OUTPUT_PP*/;   // 推挽输出
-    GPIO_InitStruct.Pull = GPIO_PULLUP;           // 上拉
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // 高速
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 ```
