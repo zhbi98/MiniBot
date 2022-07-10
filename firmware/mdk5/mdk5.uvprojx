@@ -338,7 +338,7 @@
               <MiscControls>--diag_suppress=1295</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>..\drivers;..\drivers\CMSIS\Core\Include;..\drivers\CMSIS\Include;..\drivers\CMSIS\Device\ST\STM32F1xx\Include;..\drivers\STM32F1xx_HAL_Driver\Inc;..\drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\main;..\MPU6050</IncludePath>
+              <IncludePath>..\drivers;..\drivers\CMSIS\Core\Include;..\drivers\CMSIS\Include;..\drivers\CMSIS\Device\ST\STM32F1xx\Include;..\drivers\STM32F1xx_HAL_Driver\Inc;..\drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\main;..\MPU6050;..\MPU6050\dmp</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -731,6 +731,16 @@
               <FileName>MPU6050_I2C.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MPU6050\MPU6050_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>inv_mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MPU6050\dmp\inv_mpu.c</FilePath>
+            </File>
+            <File>
+              <FileName>inv_mpu_dmp_motion_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MPU6050\dmp\inv_mpu_dmp_motion_driver.c</FilePath>
             </File>
           </Files>
         </Group>

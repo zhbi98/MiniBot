@@ -1,123 +1,199 @@
 
-#if 0
 #include "MPU6050_I2C.h"
 
-/* I2C handler declaration */
-I2C_HandleTypeDef I2cHandle;
-
-/* User can use this section to tailor I2Cx/I2Cx instance used and associated
-     resources */
-/* Definition for I2Cx clock resources */
-#define I2Cx                            I2C1
-#define I2Cx_CLK_ENABLE()               __HAL_RCC_I2C1_CLK_ENABLE()
-#define I2Cx_SDA_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
-#define I2Cx_SCL_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE() 
-
-#define I2Cx_FORCE_RESET()              __HAL_RCC_I2C1_FORCE_RESET()
-#define I2Cx_RELEASE_RESET()            __HAL_RCC_I2C1_RELEASE_RESET()
-
-/* Definition for I2Cx Pins */
-#define I2Cx_SCL_PIN                    GPIO_PIN_6
-#define I2Cx_SCL_GPIO_PORT              GPIOB
-#define I2Cx_SDA_PIN                    GPIO_PIN_7
-#define I2Cx_SDA_GPIO_PORT              GPIOB
-
-/* Uncomment this line to use the board as master, if not it is used as slave */
-//#define MASTER_BOARD
-#define I2C_ADDRESS        0x30F
-
-/* I2C SPEEDCLOCK define to max value: 400 KHz on STM32F1xx*/
-#define I2C_SPEEDCLOCK   400000
-#define I2C_DUTYCYCLE    I2C_DUTYCYCLE_2
-
-static void Error_Handler(void);
-
-void mpu_i2c_init()
+static void mpu6050_sleep_us(unsigned int us)
 {
-    /*##-1- Configure the I2C peripheral ######################################*/
-    I2cHandle.Instance             = I2Cx;
-    I2cHandle.Init.ClockSpeed      = I2C_SPEEDCLOCK;
-    I2cHandle.Init.DutyCycle       = I2C_DUTYCYCLE;
-    I2cHandle.Init.OwnAddress1     = I2C_ADDRESS;
-    I2cHandle.Init.AddressingMode  = I2C_ADDRESSINGMODE_10BIT;
-    I2cHandle.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-    I2cHandle.Init.OwnAddress2     = 0xFF;
-    I2cHandle.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-    I2cHandle.Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;  
+    unsigned int i;
 
-    if (HAL_I2C_Init(&I2cHandle) != HAL_OK)
-    {
-        /* Initialization Error */
-        Error_Handler();
-    }
+    /**
+     * precise delay is best for software i2c bus, but
+     * how to determine if the delay is accurate?
+     *
+     * IO can be set to output mode, so output a 
+     * square wave through this IO, and then use an 
+     * oscilloscope to measure the period of the 
+     * square wave to know.
+     * 
+     * Example:
+     * MCU_IO_OUTPUT_H();
+     * delay_us(2);
+     * MCU_IO_OUTPUT_L();
+     * delay_us(2);
+     */
+    for (; us > 0; us--)
+        for (i = 6; i > 0; i--);
 }
 
-/** @defgroup HAL_MSP_Private_Functions
-    * @{
-    */
+void mpu6050_i2c_sleep_time_test()
+{
+    MPU6050_SCL_L();
+    mpu6050_sleep_us(1);
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(1);
+}
 
-/**
-    * @brief I2C MSP Initialization 
-    *        This function configures the hardware resources used in this example: 
-    *           - Peripheral's clock enable
-    *           - Peripheral's GPIO Configuration  
-    *           - DMA configuration for transmission request by peripheral 
-    *           - NVIC configuration for DMA interrupt request enable
-    * @param hi2c: I2C handle pointer
-    * @retval None
-    */
-void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
+void mpu6050_i2c_gpio_init()
 {
     GPIO_InitTypeDef  GPIO_InitStruct;
-    
-    /*##-1- Enable peripherals and GPIO Clocks #################################*/
-    /* Enable GPIO TX/RX clock */
-    I2Cx_SCL_GPIO_CLK_ENABLE();
-    I2Cx_SDA_GPIO_CLK_ENABLE();
-    /* Enable I2Cx clock */
-    I2Cx_CLK_ENABLE(); 
 
-    /*##-2- Configure peripheral GPIO ##########################################*/  
-    /* I2C TX GPIO pin configuration  */
-    GPIO_InitStruct.Pin       = I2Cx_SCL_PIN;
-    GPIO_InitStruct.Mode      = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull      = GPIO_PULLUP;
-    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(I2Cx_SCL_GPIO_PORT, &GPIO_InitStruct);
-        
-    /* I2C RX GPIO pin configuration  */
-    GPIO_InitStruct.Pin       = I2Cx_SDA_PIN;
-    HAL_GPIO_Init(I2Cx_SDA_GPIO_PORT, &GPIO_InitStruct);
+    MPU6050_SCL_CLOCK_ENABLE();
+
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+    // SCL
+    GPIO_InitStruct.Pin = MPU6050_SCL_PIN;
+    HAL_GPIO_Init(MPU6050_SCL_GPIO, &GPIO_InitStruct);
+
+    MPU6050_SDA_CLOCK_ENABLE();
+
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+    // SDA
+    GPIO_InitStruct.Pin = MPU6050_SDA_PIN;
+    HAL_GPIO_Init(MPU6050_SDA_GPIO, &GPIO_InitStruct);
 }
 
-/**
-    * @brief I2C MSP De-Initialization 
-    *        This function frees the hardware resources used in this example:
-    *          - Disable the Peripheral's clock
-    *          - Revert GPIO, DMA and NVIC configuration to their default state
-    * @param hi2c: I2C handle pointer
-    * @retval None
-    */
-void HAL_I2C_MspDeInit(I2C_HandleTypeDef *hi2c)
+void mpu6050_sda_out_mode()
 {
-    
-    /*##-1- Reset peripherals ##################################################*/
-    I2Cx_FORCE_RESET();
-    I2Cx_RELEASE_RESET();
+    // gpio_init(MPU6050_SDA_GPIO, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, MPU6050_SDA_PIN);
+    GPIO_InitTypeDef  GPIO_InitStruct;
 
-    /*##-2- Disable peripherals and GPIO Clocks #################################*/
-    /* Configure I2C Tx as alternate function  */
-    HAL_GPIO_DeInit(I2Cx_SCL_GPIO_PORT, I2Cx_SCL_PIN);
-    /* Configure I2C Rx as alternate function  */
-    HAL_GPIO_DeInit(I2Cx_SDA_GPIO_PORT, I2Cx_SDA_PIN);
+    HAL_GPIO_DeInit(MPU6050_SDA_GPIO, MPU6050_SDA_PIN);
+
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+    // SDA
+    GPIO_InitStruct.Pin = MPU6050_SDA_PIN;
+    HAL_GPIO_Init(MPU6050_SDA_GPIO, &GPIO_InitStruct);
 }
 
-static void Error_Handler(void)
+void mpu6050_sda_in_mode()
 {
-    /* Error if LED2 is slowly blinking (1 sec. period) */
-    while(1)
-    {    
+    // gpio_init(MPU6050_SDA_GPIO, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, MPU6050_SDA_PIN);
+    GPIO_InitTypeDef  GPIO_InitStruct;
 
-    } 
+    HAL_GPIO_DeInit(MPU6050_SDA_GPIO, MPU6050_SDA_PIN);
+
+    GPIO_InitStruct.Mode  = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+    // SDA
+    GPIO_InitStruct.Pin = MPU6050_SDA_PIN;
+    HAL_GPIO_Init(MPU6050_SDA_GPIO, &GPIO_InitStruct);
 }
-#endif
+
+void mpu6050_i2c_start()
+{
+    mpu6050_sda_out_mode();
+    MPU6050_SDA_H();
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(4);
+    MPU6050_SDA_L();
+    mpu6050_sleep_us(4);
+    MPU6050_SCL_L();
+}
+
+void mpu6050_i2c_stop()
+{
+    mpu6050_sda_out_mode();
+    MPU6050_SCL_L();
+    MPU6050_SDA_L();
+    mpu6050_sleep_us(4);
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(1);
+    MPU6050_SDA_H();
+    mpu6050_sleep_us(4);
+}
+
+unsigned char mpu6050_i2c_wait_ack()
+{
+    unsigned char times = 0;
+
+    mpu6050_sda_in_mode();
+    MPU6050_SDA_H();
+    mpu6050_sleep_us(1);     
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(1); 
+
+    while (READ_MPU6050_SDA()) {
+        // times++;
+        if (times > 255) {
+            mpu6050_i2c_stop();
+            MPU6050_SCL_L();
+            return 1;
+        }
+    }
+    MPU6050_SCL_L();
+    return 0;  
+}
+
+void mpu6050_i2c_ack()
+{
+    MPU6050_SCL_L();
+    mpu6050_sda_out_mode();
+    MPU6050_SDA_L();
+    mpu6050_sleep_us(2);
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(2);
+    MPU6050_SCL_L();
+}
+
+void mpu6050_i2c_nack()
+{
+    MPU6050_SCL_L();
+    mpu6050_sda_out_mode();
+    MPU6050_SDA_H();
+    mpu6050_sleep_us(2);
+    MPU6050_SCL_H();
+    mpu6050_sleep_us(2);
+    MPU6050_SCL_L();
+}
+
+void mpu6050_i2c_send_byte(unsigned char a_byte)
+{                        
+    unsigned char send;
+
+    mpu6050_sda_out_mode();
+    MPU6050_SCL_L();
+    for (send = 0; send < 8; send++) {              
+        if ((a_byte & 0x80) >> 7)
+            MPU6050_SDA_H();
+        else
+            MPU6050_SDA_L();
+        a_byte <<= 1;
+        mpu6050_sleep_us(2);
+        MPU6050_SCL_H();
+        mpu6050_sleep_us(2); 
+        MPU6050_SCL_L();
+        mpu6050_sleep_us(2);
+    }    
+} 
+
+unsigned char mpu6050_i2c_read_byte(unsigned char ack)
+{
+    unsigned char i, receive = 0;
+
+    mpu6050_sda_in_mode();
+    for (i = 0; i < 8; i++) {
+        MPU6050_SCL_L();
+        mpu6050_sleep_us(2);
+        MPU6050_SCL_H();
+        receive <<= 1;
+        if (READ_MPU6050_SDA())
+            receive++;
+        mpu6050_sleep_us(1); 
+    }
+
+    if (!ack)
+        mpu6050_i2c_nack();
+    else
+        mpu6050_i2c_ack();
+    return receive;
+}
