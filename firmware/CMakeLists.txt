@@ -42,7 +42,7 @@ else ()
 endif ()
 
 include_directories(
-    ./
+        ./
 	${CMAKE_SOURCE_DIR}/drivers/CMSIS/Include
 	${CMAKE_SOURCE_DIR}/drivers/CMSIS/Device/ST/STM32F1xx/Include
 	${CMAKE_SOURCE_DIR}/drivers/STM32F1xx_HAL_Driver/Inc
