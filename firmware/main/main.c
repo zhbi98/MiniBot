@@ -1,11 +1,11 @@
 
 #include "stm32f1xx_hal.h"
 #include "time.h"
-#include "MPU6050.h"
-#include "MPU6050_I2C.h"
+// #include "MPU6050.h"
+// #include "MPU6050_I2C.h"
 #include "usart.h"
-#include "inv_mpu.h"
-#include "inv_mpu_dmp_motion_driver.h" 
+// #include "inv_mpu.h"
+// #include "inv_mpu_dmp_motion_driver.h" 
 
 /* TIM handle declaration */
 TIM_HandleTypeDef    TimHandle;
@@ -19,6 +19,7 @@ static void Error_Handler(void);
 static void pwm2_gpio_init();
 static void pwm4_gpio_init();
 
+#if 0
 void send_format_data(unsigned char f_code, unsigned char * data, unsigned char length)
 {
     unsigned char buf[32];
@@ -100,6 +101,7 @@ void send_dmp_data(short aacx, short aacy, short aacz, short gyrox, short gyroy,
 
     send_format_data(0xaf, buf, 28);
 }
+#endif
 
 int main()
 {
@@ -110,7 +112,7 @@ int main()
 
     HAL_Init();
     SystemClock_Config();
-#if 1
+#if 0
     MPU_Init();
     while (mpu_dmp_init());
 #endif
@@ -178,7 +180,7 @@ int main()
         // cnt--;
         // if (cnt <= 50)
         //     cnt = 50;
-#if 1
+#if 0
         MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
         MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
         temp = MPU_Get_Temperature();
@@ -188,8 +190,8 @@ int main()
                 (int)(roll * 100), (int)(pitch * 100), (int)(yaw * 10));
         }
 #endif
-        // usart_send_string("Hello, MiNiBot!!!");
-        // usart_send_fmt_string("MiNiBot:%d", 2010);
+        usart_send_string("Hello, MiNiBot!!!\n");
+        // usart_send_fmt_string("MiNiBot:%d\n", 2010);
         // usart_send_string(aRxBuffer);
     }
     return 0;
