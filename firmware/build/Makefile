@@ -128,6 +128,102 @@ MiniBot.elf/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/build
 .PHONY : MiniBot.elf/fast
 
+MPU6050/MPU6050.obj: MPU6050/MPU6050.c.obj
+.PHONY : MPU6050/MPU6050.obj
+
+# target to build an object file
+MPU6050/MPU6050.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050.c.obj
+.PHONY : MPU6050/MPU6050.c.obj
+
+MPU6050/MPU6050.i: MPU6050/MPU6050.c.i
+.PHONY : MPU6050/MPU6050.i
+
+# target to preprocess a source file
+MPU6050/MPU6050.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050.c.i
+.PHONY : MPU6050/MPU6050.c.i
+
+MPU6050/MPU6050.s: MPU6050/MPU6050.c.s
+.PHONY : MPU6050/MPU6050.s
+
+# target to generate assembly for a file
+MPU6050/MPU6050.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050.c.s
+.PHONY : MPU6050/MPU6050.c.s
+
+MPU6050/MPU6050_I2C.obj: MPU6050/MPU6050_I2C.c.obj
+.PHONY : MPU6050/MPU6050_I2C.obj
+
+# target to build an object file
+MPU6050/MPU6050_I2C.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050_I2C.c.obj
+.PHONY : MPU6050/MPU6050_I2C.c.obj
+
+MPU6050/MPU6050_I2C.i: MPU6050/MPU6050_I2C.c.i
+.PHONY : MPU6050/MPU6050_I2C.i
+
+# target to preprocess a source file
+MPU6050/MPU6050_I2C.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050_I2C.c.i
+.PHONY : MPU6050/MPU6050_I2C.c.i
+
+MPU6050/MPU6050_I2C.s: MPU6050/MPU6050_I2C.c.s
+.PHONY : MPU6050/MPU6050_I2C.s
+
+# target to generate assembly for a file
+MPU6050/MPU6050_I2C.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050_I2C.c.s
+.PHONY : MPU6050/MPU6050_I2C.c.s
+
+MPU6050/dmp/inv_mpu.obj: MPU6050/dmp/inv_mpu.c.obj
+.PHONY : MPU6050/dmp/inv_mpu.obj
+
+# target to build an object file
+MPU6050/dmp/inv_mpu.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.obj
+.PHONY : MPU6050/dmp/inv_mpu.c.obj
+
+MPU6050/dmp/inv_mpu.i: MPU6050/dmp/inv_mpu.c.i
+.PHONY : MPU6050/dmp/inv_mpu.i
+
+# target to preprocess a source file
+MPU6050/dmp/inv_mpu.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.i
+.PHONY : MPU6050/dmp/inv_mpu.c.i
+
+MPU6050/dmp/inv_mpu.s: MPU6050/dmp/inv_mpu.c.s
+.PHONY : MPU6050/dmp/inv_mpu.s
+
+# target to generate assembly for a file
+MPU6050/dmp/inv_mpu.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.s
+.PHONY : MPU6050/dmp/inv_mpu.c.s
+
+MPU6050/dmp/inv_mpu_dmp_motion_driver.obj: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.obj
+
+# target to build an object file
+MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
+
+MPU6050/dmp/inv_mpu_dmp_motion_driver.i: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.i
+
+# target to preprocess a source file
+MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
+
+MPU6050/dmp/inv_mpu_dmp_motion_driver.s: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.s
+
+# target to generate assembly for a file
+MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
+.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
+
 drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj: drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s.obj
 .PHONY : drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
 
@@ -1681,6 +1777,18 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... MiniBot.elf
+	@echo ... MPU6050/MPU6050.obj
+	@echo ... MPU6050/MPU6050.i
+	@echo ... MPU6050/MPU6050.s
+	@echo ... MPU6050/MPU6050_I2C.obj
+	@echo ... MPU6050/MPU6050_I2C.i
+	@echo ... MPU6050/MPU6050_I2C.s
+	@echo ... MPU6050/dmp/inv_mpu.obj
+	@echo ... MPU6050/dmp/inv_mpu.i
+	@echo ... MPU6050/dmp/inv_mpu.s
+	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.obj
+	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.i
+	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.s
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.i

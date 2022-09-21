@@ -14,7 +14,8 @@
             "configFiles": [
 				"D:/Others/OpenOCD-20211118-0.11.0/share/openocd/scripts/interface/cmsis-dap.cfg",
                 "D:/Others/OpenOCD-20211118-0.11.0/share/openocd/scripts/target/stm32f1x.cfg",
-            ]
+            ],
+            "svdFile": "C:/Users/20220615/Desktop/MiniBot/firmware/build/STM32F103xx.svd",
         }
     ]
 }
