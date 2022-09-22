@@ -25,6 +25,8 @@ void usart_init()
         Error_Handler();
     }
     HAL_UART_Receive_IT(&UartHandle, &RevByte, 1);
+
+    RetargetInit(&UartHandle);
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)

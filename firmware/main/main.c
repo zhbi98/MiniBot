@@ -1,7 +1,8 @@
 
 #include "stm32f1xx_hal.h"
+#include <string.h>
 #include "time.h"
-#include "usart.h"
+#include "log.h"
 
 #if 1
 #include "MPU6050_I2C.h"
@@ -115,7 +116,7 @@ int main()
 
     HAL_Init();
     SystemClock_Config();
-#if 1
+#if 0
     MPU_Init();
     while (mpu_dmp_init());
 #endif
@@ -183,7 +184,7 @@ int main()
         // cnt--;
         // if (cnt <= 50)
         //     cnt = 50;
-#if 1
+#if 0
         MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
         MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
         temp = MPU_Get_Temperature();
@@ -193,9 +194,7 @@ int main()
                 (int)(roll * 100), (int)(pitch * 100), (int)(yaw * 10));
         }
 #endif
-        // usart_send_string("Hello, MiNiBot!!!\n");
-        // usart_send_fmt_string("MiNiBot:%d\n", 2010);
-        // usart_send_string(aRxBuffer);
+        info("Hello, MiNiBot:%d", 200);
     }
     return 0;
 }
@@ -282,12 +281,12 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim == &TimHandle) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
         count = __HAL_TIM_GetCounter(htim); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(htim,TIM_CHANNEL_2,(count+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值
+        __HAL_TIM_SET_COMPARE(htim,TIM_CHANNEL_2,(count+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
     }
     else if (htim == &TimHandle2) {
         __IO uint16_t count2 = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
         count2 = __HAL_TIM_GetCounter(htim); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(htim,TIM_CHANNEL_4,(count2+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值
+        __HAL_TIM_SET_COMPARE(htim,TIM_CHANNEL_4,(count2+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
     }
 }
 

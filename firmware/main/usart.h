@@ -5,6 +5,7 @@
 #include "stm32f1xx_hal.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include "retarget.h"
 
 extern UART_HandleTypeDef UartHandle;
 

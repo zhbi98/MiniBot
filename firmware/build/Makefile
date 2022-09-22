@@ -1648,6 +1648,30 @@ drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s
 .PHONY : drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s
 
+main/log.obj: main/log.c.obj
+.PHONY : main/log.obj
+
+# target to build an object file
+main/log.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.obj
+.PHONY : main/log.c.obj
+
+main/log.i: main/log.c.i
+.PHONY : main/log.i
+
+# target to preprocess a source file
+main/log.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.i
+.PHONY : main/log.c.i
+
+main/log.s: main/log.c.s
+.PHONY : main/log.s
+
+# target to generate assembly for a file
+main/log.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.s
+.PHONY : main/log.c.s
+
 main/main.obj: main/main.c.obj
 .PHONY : main/main.obj
 
@@ -1671,6 +1695,30 @@ main/main.s: main/main.c.s
 main/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/main.c.s
 .PHONY : main/main.c.s
+
+main/retarget.obj: main/retarget.c.obj
+.PHONY : main/retarget.obj
+
+# target to build an object file
+main/retarget.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/retarget.c.obj
+.PHONY : main/retarget.c.obj
+
+main/retarget.i: main/retarget.c.i
+.PHONY : main/retarget.i
+
+# target to preprocess a source file
+main/retarget.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/retarget.c.i
+.PHONY : main/retarget.c.i
+
+main/retarget.s: main/retarget.c.s
+.PHONY : main/retarget.s
+
+# target to generate assembly for a file
+main/retarget.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/retarget.c.s
+.PHONY : main/retarget.c.s
 
 main/stm32f1xx_hal_msp.obj: main/stm32f1xx_hal_msp.c.obj
 .PHONY : main/stm32f1xx_hal_msp.obj
@@ -1719,6 +1767,30 @@ main/stm32f1xx_it.s: main/stm32f1xx_it.c.s
 main/stm32f1xx_it.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/stm32f1xx_it.c.s
 .PHONY : main/stm32f1xx_it.c.s
+
+main/syscalls.obj: main/syscalls.c.obj
+.PHONY : main/syscalls.obj
+
+# target to build an object file
+main/syscalls.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/syscalls.c.obj
+.PHONY : main/syscalls.c.obj
+
+main/syscalls.i: main/syscalls.c.i
+.PHONY : main/syscalls.i
+
+# target to preprocess a source file
+main/syscalls.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/syscalls.c.i
+.PHONY : main/syscalls.c.i
+
+main/syscalls.s: main/syscalls.c.s
+.PHONY : main/syscalls.s
+
+# target to generate assembly for a file
+main/syscalls.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/syscalls.c.s
+.PHONY : main/syscalls.c.s
 
 main/time.obj: main/time.c.obj
 .PHONY : main/time.obj
@@ -1967,15 +2039,24 @@ help:
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.obj
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.i
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.s
+	@echo ... main/log.obj
+	@echo ... main/log.i
+	@echo ... main/log.s
 	@echo ... main/main.obj
 	@echo ... main/main.i
 	@echo ... main/main.s
+	@echo ... main/retarget.obj
+	@echo ... main/retarget.i
+	@echo ... main/retarget.s
 	@echo ... main/stm32f1xx_hal_msp.obj
 	@echo ... main/stm32f1xx_hal_msp.i
 	@echo ... main/stm32f1xx_hal_msp.s
 	@echo ... main/stm32f1xx_it.obj
 	@echo ... main/stm32f1xx_it.i
 	@echo ... main/stm32f1xx_it.s
+	@echo ... main/syscalls.obj
+	@echo ... main/syscalls.i
+	@echo ... main/syscalls.s
 	@echo ... main/time.obj
 	@echo ... main/time.i
 	@echo ... main/time.s
