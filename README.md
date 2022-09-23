@@ -3,16 +3,44 @@
 
 ## 浮点打印
 
+直接打印
+
 ```
 void printDouble(double v, int decimalDigits)
 {
     int i = 1;
     int intPart, fractPart;
-    for (;decimalDigits!=0; i*=10, decimalDigits--);
+
+    for (; decimalDigits != 0; i *= 10, decimalDigits--);
     intPart = (int)v;
-    fractPart = (int)((v-(double)(int)v)*i);
-    if(fractPart < 0) fractPart *= -1;
-    printf("%i.%i", intPart, fractPart);
+
+    fractPart = (int)((v - (double)(int)v) * i);
+    if (fractPart < 0) fractPart *= -1;
+    printf("%d.%d", intPart, fractPart);
+}
+```
+
+返回值的模式
+
+```
+char * Float2String(float value)
+{
+    static char * str[16];
+
+    int decimalDigits = 3;
+    int i = 1;
+    int intPart, fractPart;
+
+    for (; decimalDigits != 0; i *= 10, decimalDigits--);
+    intPart = (int)value;
+
+    fractPart = (int)((value - (double)(int)value) * i);
+    if (fractPart < 0) fractPart *= -1;
+    // printf("%i.%i", intPart, fractPart);
+
+    sprintf((char*)str, "%d.%d", intPart, fractPart);
+
+    return str;
 }
 ```
 
