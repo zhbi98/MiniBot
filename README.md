@@ -1,6 +1,21 @@
 
 # MiNiBot 
 
+## 浮点打印
+
+```
+void printDouble(double v, int decimalDigits)
+{
+    int i = 1;
+    int intPart, fractPart;
+    for (;decimalDigits!=0; i*=10, decimalDigits--);
+    intPart = (int)v;
+    fractPart = (int)((v-(double)(int)v)*i);
+    if(fractPart < 0) fractPart *= -1;
+    printf("%i.%i", intPart, fractPart);
+}
+```
+
 ## 步进电机控制 IO 映射
 
 ```
