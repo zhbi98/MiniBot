@@ -35,7 +35,7 @@ int _write(int fd, char *ptr, int len)
     if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
         // HAL_UART_Transmit_DMA(gHuart, (uint8_t *) ptr, len);
-        while (HAL_UART_Transmit(&UartHandle, (unsigned char *)ptr, len, 0XFFFF) != HAL_OK);
+        while (HAL_UART_Transmit(gHuart, (unsigned char *)ptr, len, 0XFFFF) != HAL_OK);
         return len;
     } else
         return -1;
