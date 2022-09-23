@@ -1648,6 +1648,54 @@ drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s
 .PHONY : drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c.s
 
+main/ano_tech.obj: main/ano_tech.c.obj
+.PHONY : main/ano_tech.obj
+
+# target to build an object file
+main/ano_tech.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/ano_tech.c.obj
+.PHONY : main/ano_tech.c.obj
+
+main/ano_tech.i: main/ano_tech.c.i
+.PHONY : main/ano_tech.i
+
+# target to preprocess a source file
+main/ano_tech.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/ano_tech.c.i
+.PHONY : main/ano_tech.c.i
+
+main/ano_tech.s: main/ano_tech.c.s
+.PHONY : main/ano_tech.s
+
+# target to generate assembly for a file
+main/ano_tech.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/ano_tech.c.s
+.PHONY : main/ano_tech.c.s
+
+main/demo.obj: main/demo.c.obj
+.PHONY : main/demo.obj
+
+# target to build an object file
+main/demo.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.obj
+.PHONY : main/demo.c.obj
+
+main/demo.i: main/demo.c.i
+.PHONY : main/demo.i
+
+# target to preprocess a source file
+main/demo.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.i
+.PHONY : main/demo.c.i
+
+main/demo.s: main/demo.c.s
+.PHONY : main/demo.s
+
+# target to generate assembly for a file
+main/demo.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.s
+.PHONY : main/demo.c.s
+
 main/log.obj: main/log.c.obj
 .PHONY : main/log.obj
 
@@ -1839,6 +1887,30 @@ main/usart.s: main/usart.c.s
 main/usart.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/usart.c.s
 .PHONY : main/usart.c.s
+
+utils/ftos.obj: utils/ftos.c.obj
+.PHONY : utils/ftos.obj
+
+# target to build an object file
+utils/ftos.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/ftos.c.obj
+.PHONY : utils/ftos.c.obj
+
+utils/ftos.i: utils/ftos.c.i
+.PHONY : utils/ftos.i
+
+# target to preprocess a source file
+utils/ftos.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/ftos.c.i
+.PHONY : utils/ftos.c.i
+
+utils/ftos.s: utils/ftos.c.s
+.PHONY : utils/ftos.s
+
+# target to generate assembly for a file
+utils/ftos.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/ftos.c.s
+.PHONY : utils/ftos.c.s
 
 # Help Target
 help:
@@ -2039,6 +2111,12 @@ help:
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.obj
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.i
 	@echo ... drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.s
+	@echo ... main/ano_tech.obj
+	@echo ... main/ano_tech.i
+	@echo ... main/ano_tech.s
+	@echo ... main/demo.obj
+	@echo ... main/demo.i
+	@echo ... main/demo.s
 	@echo ... main/log.obj
 	@echo ... main/log.i
 	@echo ... main/log.s
@@ -2063,6 +2141,9 @@ help:
 	@echo ... main/usart.obj
 	@echo ... main/usart.i
 	@echo ... main/usart.s
+	@echo ... utils/ftos.obj
+	@echo ... utils/ftos.i
+	@echo ... utils/ftos.s
 .PHONY : help
 
 
