@@ -9,6 +9,8 @@
 
 #include "MPU6050_I2C.h"
 #include "MPU6050.h"
+#include "kalman_filter.h"
+#include "ano_tech.h"
 
 void SystemClock_Config(void);
 void TIM3_init();
@@ -20,11 +22,6 @@ void TIM3_init();
 
 int main()
 {
-    short aacx, aacy, aacz;
-    short gyrox, gyroy, gyroz;
-    short temp;
-    float pitch, roll, yaw;
-
     HAL_Init();
     SystemClock_Config();
     usart_init();
@@ -35,24 +32,34 @@ int main()
     for (;;) {
         /* Insert delay 100 ms */
         // HAL_Delay(200);
-        MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
-        MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
-        temp = MPU_Get_Temperature();
-        roll = atan2(aacy/16384.0, aacz/16384.0) * 180.0 / 3.14;
-        // pitch = atan2(aacx, aacz) * 180.0 / 3.14;
-        pitch = -atan2(aacx/16384.0, sqrt((aacy/16384.0) * (aacy/16384.0) + (aacz/16384.0) * (aacz/16384.0))) * 180.0 / 3.14;
 
-        // printf("ACC:x=%04d,y=%04d,z=%04d\n", aacx, aacy, aacz);
-        // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyrox, gyroy, gyroz);
+        read_mpu_data();
+        mpu_data_filter();
+        angles.roll = atan2(accel.ay, accel.az) * 180.0 / 3.14;
+        // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
+        angles.pitch = -atan2(accel.ax, sqrt(accel.ay * accel.ay + accel.az * accel.az)) * 180.0 / 3.14;
 
-        // printf("ACCX :%s\n", double_string(aacx / 16384.0, 3));
-        // printf("ACCY :%s\n", double_string(aacy / 16384.0, 3));
-        // printf("ACCZ :%s\n", double_string(aacz / 16384.0, 3));
-        // printf("PITCH:%s\n", double_string(pitch, 3));
-        // printf("ROLL :%s\n", double_string(roll, 3));
-        send_mpu6050_data(aacx, aacy, aacz, gyrox, gyroy, gyroz);
-        send_dmp_data(aacx, aacy, aacz, gyrox, gyroy, gyroz, 
-            (int)(roll * 100), (int)(pitch * 100), (int)(yaw * 10));
+        // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._ax, accel._ay, accel._az);
+        // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._gx, gyro._gx, gyro._gx);
+
+        // printf("ACCX :%s\n", double_string(accel.ax, 3));
+        // printf("ACCY :%s\n", double_string(accel.ay, 3));
+        // printf("ACCZ :%s\n", double_string(accel.az, 3));
+
+        // printf("Pitch:%s\n", double_string(angles.pitch, 3));
+        // printf("Roll :%s\n", double_string(angles.roll, 3));
+
+        send_mpu6050_data(
+            accel._ax, accel._ay, accel._az, 
+            gyro._gx, gyro._gy, gyro._gz
+        );
+        send_dmp_data(
+            accel._ax, accel._ay, accel._az, 
+            gyro._gx, gyro._gy, gyro._gz, 
+            (int)(angles.roll * 100), 
+            (int)(angles.pitch * 100), 
+            (int)(angles.yaw * 10)
+        );
     }
     return 0;
 }

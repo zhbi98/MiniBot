@@ -11,10 +11,19 @@
  *     MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
  *     MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
  *     temp = MPU_Get_Temperature();
+ *
  *     if (!mpu_dmp_get_data(&pitch, &roll, &yaw)) {
- *         send_mpu6050_data(aacx, aacy, aacz, gyrox, gyroy, gyroz);
- *         send_dmp_data(aacx, aacy, aacz, gyrox, gyroy, gyroz, 
- *             (int)(roll * 100), (int)(pitch * 100), (int)(yaw * 10));
+ *         send_mpu6050_data(
+ *             aacx, aacy, aacz, 
+ *             gyrox, gyroy, gyroz
+ *         );
+ *         send_dmp_data(
+ *             aacx, aacy, aacz,
+ *             gyrox, gyroy, gyroz,
+ *             (int)(roll * 100),
+ *             (int)(pitch * 100),
+ *             (int)(yaw * 10)
+ *         );
  *     }
  * }
  */

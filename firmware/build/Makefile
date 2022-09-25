@@ -224,6 +224,30 @@ MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
 .PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
 
+MPU6050/kalman_filter.obj: MPU6050/kalman_filter.c.obj
+.PHONY : MPU6050/kalman_filter.obj
+
+# target to build an object file
+MPU6050/kalman_filter.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.obj
+.PHONY : MPU6050/kalman_filter.c.obj
+
+MPU6050/kalman_filter.i: MPU6050/kalman_filter.c.i
+.PHONY : MPU6050/kalman_filter.i
+
+# target to preprocess a source file
+MPU6050/kalman_filter.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.i
+.PHONY : MPU6050/kalman_filter.c.i
+
+MPU6050/kalman_filter.s: MPU6050/kalman_filter.c.s
+.PHONY : MPU6050/kalman_filter.s
+
+# target to generate assembly for a file
+MPU6050/kalman_filter.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.s
+.PHONY : MPU6050/kalman_filter.c.s
+
 drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj: drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s.obj
 .PHONY : drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
 
@@ -1933,6 +1957,9 @@ help:
 	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.obj
 	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.i
 	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.s
+	@echo ... MPU6050/kalman_filter.obj
+	@echo ... MPU6050/kalman_filter.i
+	@echo ... MPU6050/kalman_filter.s
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.i
