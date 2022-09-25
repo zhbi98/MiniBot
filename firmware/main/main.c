@@ -11,6 +11,12 @@
 #include "MPU6050.h"
 
 void SystemClock_Config(void);
+void TIM3_init();
+
+/**
+ * Y:tan(pitch) = tan(Axz) = Rx/Rz
+ * X:tan(roll)  = tan(Ayz) = Ry/Rz
+ */
 
 int main()
 {
@@ -23,23 +29,30 @@ int main()
     SystemClock_Config();
     usart_init();
     RetargetInit(&UartHandle);
+    TIM3_init();
     MPU_Init();
 
     for (;;) {
         /* Insert delay 100 ms */
-        HAL_Delay(200);
+        // HAL_Delay(200);
         MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
         MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
         temp = MPU_Get_Temperature();
-        pitch = atan2(aacy, aacz) * 180.0 / 3.14;
+        roll = atan2(aacy/16384.0, aacz/16384.0) * 180.0 / 3.14;
+        // pitch = atan2(aacx, aacz) * 180.0 / 3.14;
+        pitch = -atan2(aacx/16384.0, sqrt((aacy/16384.0) * (aacy/16384.0) + (aacz/16384.0) * (aacz/16384.0))) * 180.0 / 3.14;
 
         // printf("ACC:x=%04d,y=%04d,z=%04d\n", aacx, aacy, aacz);
         // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyrox, gyroy, gyroz);
 
-        printf("ACCX:%s\n",  double_string(aacx / 16384.0, 3));
-        printf("ACCY:%s\n",  double_string(aacy / 16384.0, 3));
-        printf("ACCZ:%s\n",  double_string(aacz / 16384.0, 3));
-        printf("ANGLE:%s\n", double_string(pitch, 3));
+        // printf("ACCX :%s\n", double_string(aacx / 16384.0, 3));
+        // printf("ACCY :%s\n", double_string(aacy / 16384.0, 3));
+        // printf("ACCZ :%s\n", double_string(aacz / 16384.0, 3));
+        // printf("PITCH:%s\n", double_string(pitch, 3));
+        // printf("ROLL :%s\n", double_string(roll, 3));
+        send_mpu6050_data(aacx, aacy, aacz, gyrox, gyroy, gyroz);
+        send_dmp_data(aacx, aacy, aacz, gyrox, gyroy, gyroz, 
+            (int)(roll * 100), (int)(pitch * 100), (int)(yaw * 10));
     }
     return 0;
 }
@@ -80,4 +93,57 @@ void SystemClock_Config(void)
         /* Initialization Error */
         while(1); 
     }
+}
+
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef * tim_baseHandle)
+{
+    if (tim_baseHandle->Instance == TIM3) {
+        /* USER CODE BEGIN TIM3_MspInit 0 */
+
+        /* USER CODE END TIM3_MspInit 0 */
+        /* TIM3 clock enable */
+        __HAL_RCC_TIM3_CLK_ENABLE();
+
+        /* TIM3 interrupt Init */
+        HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(TIM3_IRQn);
+        /* USER CODE BEGIN TIM3_MspInit 1 */
+
+        /* USER CODE END TIM3_MspInit 1 */
+    }
+}
+
+TIM_HandleTypeDef Tim3Handle;
+
+void TIM3_init()
+{
+    /***********************************************
+     *            TIM3 CONFIG
+     **********************************************/
+    /* USER CODE BEGIN TIM3_Init 1 */
+
+    /* USER CODE END TIM3_Init 1 */
+    Tim3Handle.Instance               = TIM3;
+    Tim3Handle.Init.Prescaler         = 7200 - 1;
+    Tim3Handle.Init.CounterMode       = TIM_COUNTERMODE_UP;
+    Tim3Handle.Init.Period            = 100;
+    Tim3Handle.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
+    Tim3Handle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+    if (HAL_TIM_Base_Init(&Tim3Handle) != HAL_OK) {
+        // Error_Handler();
+    }
+
+    HAL_TIM_Base_Start_IT(&Tim3Handle);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim == &Tim3Handle) {
+        // printf("%s\n", "TIM3");
+    }
+}
+
+void TIM3_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&Tim3Handle);
 }
