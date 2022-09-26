@@ -38,6 +38,7 @@ struct _recursive {
     float last_estimste;
     float K_gain;
 };
+
 #if 0
 struct _recursive ax_recursive = {.K_gain = 0.4};
 struct _recursive ay_recursive = {.K_gain = 0.4};
@@ -46,6 +47,7 @@ struct _recursive gx_recursive = {.K_gain = 0.4};
 struct _recursive gy_recursive = {.K_gain = 0.4};
 struct _recursive gz_recursive = {.K_gain = 0.4};
 #endif
+
 float recursive_processing(struct _recursive * recursive, float Y_meas)
 {
     recursive->current_estimate = recursive->last_estimste + recursive->K_gain * (Y_meas - recursive->last_estimste);

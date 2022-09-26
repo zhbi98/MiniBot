@@ -1,6 +1,7 @@
 
 # MiniBot 
 
+```
 +-------------------------------------+
 |L_STEP_GPIO  GPIOB                   |
 |L_STEP_PIN   GPIO_Pin_9              |
@@ -34,3 +35,4 @@
 |R_FR_PIN     GPIO_Pin_1              |
 |R_FR_CLOCK   RCC_APB2Periph_GPIOB    |
 +-------------------------------------+
+```
