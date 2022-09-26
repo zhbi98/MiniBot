@@ -38,14 +38,14 @@ struct _recursive {
     float last_estimste;
     float K_gain;
 };
-
+#if 0
 struct _recursive ax_recursive = {.K_gain = 0.4};
 struct _recursive ay_recursive = {.K_gain = 0.4};
 struct _recursive az_recursive = {.K_gain = 0.4};
 struct _recursive gx_recursive = {.K_gain = 0.4};
 struct _recursive gy_recursive = {.K_gain = 0.4};
 struct _recursive gz_recursive = {.K_gain = 0.4};
-
+#endif
 float recursive_processing(struct _recursive * recursive, float Y_meas)
 {
     recursive->current_estimate = recursive->last_estimste + recursive->K_gain * (Y_meas - recursive->last_estimste);
@@ -55,12 +55,102 @@ float recursive_processing(struct _recursive * recursive, float Y_meas)
     return recursive->current_estimate;
 }
 
-void mpu_data_filter()
+struct kalman_filter_t {
+    float dt; // dt的取值为kalman滤波器采样时间
+    float angle; // 角度
+    float angle_dot; // 角速度
+    float P[2][2];
+    float Pdot[4];
+    float Q_angle; // 角度数据置信度
+    float Q_gyro; // 角速度数据置信度
+    float R_angle;
+    float C_0;
+    float q_bias;
+    float angle_err;
+    float PCt_0;
+    float PCt_1;
+    float E;
+    float K_0;
+    float K_1;
+    float t_0;
+    float t_1;
+};
+
+struct kalman_filter_t roll_kalman_Filter = {
+    .dt      = 0.01,
+    .P       = {
+        {1, 0}, 
+        {0, 1}
+    },
+    .Pdot    = {0, 0, 0, 0},
+    .Q_angle = 0.001, 
+    .Q_gyro  = 0.005,
+    .R_angle = 0.5,
+    .C_0     = 1,
+};
+
+struct kalman_filter_t pitch_kalman_Filter = {
+    .dt      = 0.01,
+    .P       = {
+        {1, 0}, 
+        {0, 1}
+    },
+    .Pdot    = {0, 0, 0, 0},
+    .Q_angle = 0.001, 
+    .Q_gyro  = 0.005,
+    .R_angle = 0.5,
+    .C_0     = 1,
+};
+
+struct kalman_filter_t yaw_kalman_Filter = {
+    .dt      = 0.01,
+    .P       = {
+        {1, 0}, 
+        {0, 1}
+    },
+    .Pdot    = {0, 0, 0, 0},
+    .Q_angle = 0.001, 
+    .Q_gyro  = 0.005,
+    .R_angle = 0.5,
+    .C_0     = 1,
+};
+
+void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, float *angle_f, float *angle_dot_f)
 {
-    accel.ax = recursive_processing(&ax_recursive, accel.ax);
-    accel.ay = recursive_processing(&ay_recursive, accel.ay);
-    accel.az = recursive_processing(&az_recursive, accel.az);
-    gyro.gx  = recursive_processing(&gx_recursive, gyro.gx);
-    gyro.gy  = recursive_processing(&gy_recursive, gyro.gy);
-    gyro.gz  = recursive_processing(&gz_recursive, gyro.gz);
+    kf->angle += (gyro_m - kf->q_bias) * kf->dt;
+
+    kf->Pdot[0] = kf->Q_angle - kf->P[0][1] - kf->P[1][0];
+    kf->Pdot[1] = -kf->P[1][1];
+    kf->Pdot[2] = -kf->P[1][1];
+    kf->Pdot[3] = kf->Q_gyro;
+
+    kf->P[0][0] += kf->Pdot[0] * kf->dt;
+    kf->P[0][1] += kf->Pdot[1] * kf->dt;
+    kf->P[1][0] += kf->Pdot[2] * kf->dt;
+    kf->P[1][1] += kf->Pdot[3] * kf->dt;
+
+    kf->angle_err = angle_m - kf->angle;
+
+    kf->PCt_0 = kf->C_0 * kf->P[0][0];
+    kf->PCt_1 = kf->C_0 * kf->P[1][0];
+
+    kf->E = kf->R_angle + kf->C_0 * kf->PCt_0;
+
+    kf->K_0 = kf->PCt_0 / kf->E;
+    kf->K_1 = kf->PCt_1 / kf->E;
+
+    kf->t_0 = kf->PCt_0;
+    kf->t_1 = kf->C_0 * kf->P[0][1];
+
+    kf->P[0][0] -= kf->K_0 * kf->t_0;
+    kf->P[0][1] -= kf->K_0 * kf->t_1;
+    kf->P[1][0] -= kf->K_1 * kf->t_0;
+    kf->P[1][1] -= kf->K_1 * kf->t_1;
+        
+    kf->angle += kf->K_0 * kf->angle_err;
+    kf->q_bias += kf->K_1 * kf->angle_err;
+    kf->angle_dot = gyro_m - kf->q_bias;
+
+    *angle_f = kf->angle;
+    *angle_dot_f = kf->angle_dot;
 }

@@ -34,10 +34,13 @@ int main()
         // HAL_Delay(200);
 
         read_mpu_data();
-        mpu_data_filter();
         angles.roll = atan2(accel.ay, accel.az) * 180.0 / 3.14;
         // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
         angles.pitch = -atan2(accel.ax, sqrt(accel.ay * accel.ay + accel.az * accel.az)) * 180.0 / 3.14;
+
+        kalman_filter(&roll_kalman_Filter, angles.roll, gyro.gx, &angles.roll, &gyro.gx);
+        kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.gy, &angles.pitch, &gyro.gy);
+        kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.gz, &angles.yaw, &gyro.gz);
 
         // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._ax, accel._ay, accel._az);
         // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._gx, gyro._gx, gyro._gx);
