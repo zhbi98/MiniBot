@@ -109,3 +109,128 @@ void send_dmp_data(short aacx, short aacy, short aacz, short gyrox, short gyroy,
 
     send_format_data(0xaf, buf, 28);
 }
+
+/**
+ * Example:
+ * 
+ * ANO_DT_Send_Senser(
+ *     accel._ax,
+ *     accel._ay,
+ *     accel._az,
+ *     gyro._gx,
+ *     gyro._gy,
+ *     gyro._gz,
+ *     0,
+ *     0,
+ *     0,
+ *     0
+ * );
+ *
+ * ANO_DT_Send_Status(
+ *     -angles.roll, 
+ *     angles.pitch, 
+ *     -angles.yaw, 
+ *     0, 
+ *     0, 
+ *     0
+ * );
+ */
+
+#define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)      ) )
+#define BYTE1(dwTemp)       ( *( (char *)(&dwTemp) + 1) )
+#define BYTE2(dwTemp)       ( *( (char *)(&dwTemp) + 2) )
+#define BYTE3(dwTemp)       ( *( (char *)(&dwTemp) + 3) )
+
+unsigned char data_to_send[50];    //发送数据缓存
+
+void ANO_DT_Send_Senser(short a_x,short a_y,short a_z,short g_x,short g_y,short g_z,short m_x,short m_y,short m_z,int bar)
+{
+    unsigned char _cnt=0;
+    short _temp;
+    
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0x02;
+    data_to_send[_cnt++]=0;
+    
+    _temp = a_x;
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = a_y;
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = a_z;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    
+    _temp = g_x;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = g_y;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = g_z;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    
+    _temp = m_x;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = m_y;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = m_z;    
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    
+    data_to_send[3] = _cnt-4;
+    
+    unsigned char sum = 0;
+    for(unsigned char i=0;i<_cnt;i++)
+        sum += data_to_send[i];
+    data_to_send[_cnt++] = sum;
+    
+    // ANO_DT_Send_Data(data_to_send, _cnt);
+    while (HAL_UART_Transmit(&UartHandle, data_to_send, _cnt, 0XFFFF) != HAL_OK);
+}
+
+void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, int alt, unsigned char fly_model, unsigned char armed)
+{
+    unsigned char _cnt=0;
+    short _temp;
+    int _temp2 = alt;
+    
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0x01;
+    data_to_send[_cnt++]=0;
+    
+    _temp = (int)(angle_rol*100);
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = (int)(angle_pit*100);
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    _temp = (int)(angle_yaw*100);
+    data_to_send[_cnt++]=BYTE1(_temp);
+    data_to_send[_cnt++]=BYTE0(_temp);
+    
+    data_to_send[_cnt++]=BYTE3(_temp2);
+    data_to_send[_cnt++]=BYTE2(_temp2);
+    data_to_send[_cnt++]=BYTE1(_temp2);
+    data_to_send[_cnt++]=BYTE0(_temp2);
+    
+    data_to_send[_cnt++] = fly_model;
+    
+    data_to_send[_cnt++] = armed;
+    
+    data_to_send[3] = _cnt-4;
+    
+    unsigned char sum = 0;
+    for(unsigned char i=0;i<_cnt;i++)
+        sum += data_to_send[i];
+    data_to_send[_cnt++]=sum;
+    
+    // Usart2_Send(data_to_send, _cnt);
+    while (HAL_UART_Transmit(&UartHandle, data_to_send, _cnt, 0XFFFF) != HAL_OK);
+}

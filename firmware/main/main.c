@@ -20,6 +20,10 @@ void TIM3_init();
  * X:tan(roll)  = tan(Ayz) = Ry/Rz
  */
 
+unsigned int last_count = 0;
+unsigned int count = 0;
+unsigned int deltaT = 0;
+
 int main()
 {
     HAL_Init();
@@ -38,6 +42,12 @@ int main()
         // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
         angles.pitch = -atan2(accel.ax, sqrt(accel.ay * accel.ay + accel.az * accel.az)) * 180.0 / 3.14;
 
+        deltaT = count - last_count;
+        last_count = count;
+        roll_kalman_Filter.dt  = deltaT * 10 / 1000.0;
+        pitch_kalman_Filter.dt = deltaT * 10 / 1000.0;
+        yaw_kalman_Filter.dt   = deltaT * 10 / 1000.0;
+
         kalman_filter(&roll_kalman_Filter, angles.roll, gyro.gx, &angles.roll, &gyro.gx);
         kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.gy, &angles.pitch, &gyro.gy);
         kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.gz, &angles.yaw, &gyro.gz);
@@ -51,7 +61,7 @@ int main()
 
         // printf("Pitch:%s\n", double_string(angles.pitch, 3));
         // printf("Roll :%s\n", double_string(angles.roll, 3));
-
+#if 0
         send_mpu6050_data(
             accel._ax, accel._ay, accel._az, 
             gyro._gx, gyro._gy, gyro._gz
@@ -63,6 +73,28 @@ int main()
             (int)(angles.pitch * 100), 
             (int)(angles.yaw * 10)
         );
+#endif
+#if 1
+        ANO_DT_Send_Senser(
+            accel._ax,
+            accel._ay,
+            accel._az,
+            gyro._gx,
+            gyro._gy,
+            gyro._gz,
+            0,
+            0,
+            0,
+            0
+        );
+        ANO_DT_Send_Status(
+            -angles.roll, 
+            angles.pitch, 
+            -angles.yaw, 
+            0, 
+            0, 
+            0);
+#endif
     }
     return 0;
 }
@@ -150,6 +182,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &Tim3Handle) {
         // printf("%s\n", "TIM3");
+        count++;
     }
 }
 
