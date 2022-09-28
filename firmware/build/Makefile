@@ -176,54 +176,6 @@ MPU6050/MPU6050_I2C.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050_I2C.c.s
 .PHONY : MPU6050/MPU6050_I2C.c.s
 
-MPU6050/dmp/inv_mpu.obj: MPU6050/dmp/inv_mpu.c.obj
-.PHONY : MPU6050/dmp/inv_mpu.obj
-
-# target to build an object file
-MPU6050/dmp/inv_mpu.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.obj
-.PHONY : MPU6050/dmp/inv_mpu.c.obj
-
-MPU6050/dmp/inv_mpu.i: MPU6050/dmp/inv_mpu.c.i
-.PHONY : MPU6050/dmp/inv_mpu.i
-
-# target to preprocess a source file
-MPU6050/dmp/inv_mpu.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.i
-.PHONY : MPU6050/dmp/inv_mpu.c.i
-
-MPU6050/dmp/inv_mpu.s: MPU6050/dmp/inv_mpu.c.s
-.PHONY : MPU6050/dmp/inv_mpu.s
-
-# target to generate assembly for a file
-MPU6050/dmp/inv_mpu.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu.c.s
-.PHONY : MPU6050/dmp/inv_mpu.c.s
-
-MPU6050/dmp/inv_mpu_dmp_motion_driver.obj: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.obj
-
-# target to build an object file
-MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.obj
-
-MPU6050/dmp/inv_mpu_dmp_motion_driver.i: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.i
-
-# target to preprocess a source file
-MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.i
-
-MPU6050/dmp/inv_mpu_dmp_motion_driver.s: MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.s
-
-# target to generate assembly for a file
-MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
-.PHONY : MPU6050/dmp/inv_mpu_dmp_motion_driver.c.s
-
 MPU6050/kalman_filter.obj: MPU6050/kalman_filter.c.obj
 .PHONY : MPU6050/kalman_filter.obj
 
@@ -1720,30 +1672,6 @@ main/demo.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.s
 .PHONY : main/demo.c.s
 
-main/log.obj: main/log.c.obj
-.PHONY : main/log.obj
-
-# target to build an object file
-main/log.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.obj
-.PHONY : main/log.c.obj
-
-main/log.i: main/log.c.i
-.PHONY : main/log.i
-
-# target to preprocess a source file
-main/log.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.i
-.PHONY : main/log.c.i
-
-main/log.s: main/log.c.s
-.PHONY : main/log.s
-
-# target to generate assembly for a file
-main/log.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/log.c.s
-.PHONY : main/log.c.s
-
 main/main.obj: main/main.c.obj
 .PHONY : main/main.obj
 
@@ -1791,6 +1719,30 @@ main/retarget.s: main/retarget.c.s
 main/retarget.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/retarget.c.s
 .PHONY : main/retarget.c.s
+
+main/step_motor.obj: main/step_motor.c.obj
+.PHONY : main/step_motor.obj
+
+# target to build an object file
+main/step_motor.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.obj
+.PHONY : main/step_motor.c.obj
+
+main/step_motor.i: main/step_motor.c.i
+.PHONY : main/step_motor.i
+
+# target to preprocess a source file
+main/step_motor.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.i
+.PHONY : main/step_motor.c.i
+
+main/step_motor.s: main/step_motor.c.s
+.PHONY : main/step_motor.s
+
+# target to generate assembly for a file
+main/step_motor.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.s
+.PHONY : main/step_motor.c.s
 
 main/stm32f1xx_hal_msp.obj: main/stm32f1xx_hal_msp.c.obj
 .PHONY : main/stm32f1xx_hal_msp.obj
@@ -1864,30 +1816,6 @@ main/syscalls.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/syscalls.c.s
 .PHONY : main/syscalls.c.s
 
-main/time.obj: main/time.c.obj
-.PHONY : main/time.obj
-
-# target to build an object file
-main/time.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/time.c.obj
-.PHONY : main/time.c.obj
-
-main/time.i: main/time.c.i
-.PHONY : main/time.i
-
-# target to preprocess a source file
-main/time.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/time.c.i
-.PHONY : main/time.c.i
-
-main/time.s: main/time.c.s
-.PHONY : main/time.s
-
-# target to generate assembly for a file
-main/time.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/time.c.s
-.PHONY : main/time.c.s
-
 main/usart.obj: main/usart.c.obj
 .PHONY : main/usart.obj
 
@@ -1936,6 +1864,54 @@ utils/ftos.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/ftos.c.s
 .PHONY : utils/ftos.c.s
 
+utils/log.obj: utils/log.c.obj
+.PHONY : utils/log.obj
+
+# target to build an object file
+utils/log.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/log.c.obj
+.PHONY : utils/log.c.obj
+
+utils/log.i: utils/log.c.i
+.PHONY : utils/log.i
+
+# target to preprocess a source file
+utils/log.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/log.c.i
+.PHONY : utils/log.c.i
+
+utils/log.s: utils/log.c.s
+.PHONY : utils/log.s
+
+# target to generate assembly for a file
+utils/log.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/log.c.s
+.PHONY : utils/log.c.s
+
+utils/time.obj: utils/time.c.obj
+.PHONY : utils/time.obj
+
+# target to build an object file
+utils/time.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/time.c.obj
+.PHONY : utils/time.c.obj
+
+utils/time.i: utils/time.c.i
+.PHONY : utils/time.i
+
+# target to preprocess a source file
+utils/time.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/time.c.i
+.PHONY : utils/time.c.i
+
+utils/time.s: utils/time.c.s
+.PHONY : utils/time.s
+
+# target to generate assembly for a file
+utils/time.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/utils/time.c.s
+.PHONY : utils/time.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -1951,12 +1927,6 @@ help:
 	@echo ... MPU6050/MPU6050_I2C.obj
 	@echo ... MPU6050/MPU6050_I2C.i
 	@echo ... MPU6050/MPU6050_I2C.s
-	@echo ... MPU6050/dmp/inv_mpu.obj
-	@echo ... MPU6050/dmp/inv_mpu.i
-	@echo ... MPU6050/dmp/inv_mpu.s
-	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.obj
-	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.i
-	@echo ... MPU6050/dmp/inv_mpu_dmp_motion_driver.s
 	@echo ... MPU6050/kalman_filter.obj
 	@echo ... MPU6050/kalman_filter.i
 	@echo ... MPU6050/kalman_filter.s
@@ -2144,15 +2114,15 @@ help:
 	@echo ... main/demo.obj
 	@echo ... main/demo.i
 	@echo ... main/demo.s
-	@echo ... main/log.obj
-	@echo ... main/log.i
-	@echo ... main/log.s
 	@echo ... main/main.obj
 	@echo ... main/main.i
 	@echo ... main/main.s
 	@echo ... main/retarget.obj
 	@echo ... main/retarget.i
 	@echo ... main/retarget.s
+	@echo ... main/step_motor.obj
+	@echo ... main/step_motor.i
+	@echo ... main/step_motor.s
 	@echo ... main/stm32f1xx_hal_msp.obj
 	@echo ... main/stm32f1xx_hal_msp.i
 	@echo ... main/stm32f1xx_hal_msp.s
@@ -2162,15 +2132,18 @@ help:
 	@echo ... main/syscalls.obj
 	@echo ... main/syscalls.i
 	@echo ... main/syscalls.s
-	@echo ... main/time.obj
-	@echo ... main/time.i
-	@echo ... main/time.s
 	@echo ... main/usart.obj
 	@echo ... main/usart.i
 	@echo ... main/usart.s
 	@echo ... utils/ftos.obj
 	@echo ... utils/ftos.i
 	@echo ... utils/ftos.s
+	@echo ... utils/log.obj
+	@echo ... utils/log.i
+	@echo ... utils/log.s
+	@echo ... utils/time.obj
+	@echo ... utils/time.i
+	@echo ... utils/time.s
 .PHONY : help
 
 

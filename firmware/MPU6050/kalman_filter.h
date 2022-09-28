@@ -4,23 +4,29 @@
 
 #include "MPU6050_I2C.h"
 #include "MPU6050.h"
+#include "time.h"
 
 struct _accelerometer {
-    short _ax;
-    short _ay;
-    short _az;
-    float ax;
-    float ay;
-    float az;
+    short raw_data_x;
+    short raw_data_y;
+    short raw_data_z;
+    float x;
+    float y;
+    float z;
 };
 
 struct _gyro {
-    short _gx;
-    short _gy;
-    short _gz;
-    float gx;
-    float gy;
-    float gz;
+    short raw_data_x;
+    short raw_data_y;
+    short raw_data_z;
+
+    short offset_x;
+    short offset_y;
+    short offset_z;
+
+    float x;
+    float y;
+    float z;
 };
 
 struct _angles {
@@ -28,10 +34,6 @@ struct _angles {
     float roll;
     float yaw;
 };
-
-extern struct _accelerometer accel;
-extern struct _gyro gyro;
-extern struct _angles angles;
 
 struct kalman_filter_t {
     float dt;        // dt 的取值为 kalman 滤波器采样时间
@@ -53,6 +55,10 @@ struct kalman_filter_t {
     float t_0;
     float t_1;
 };
+
+extern struct _accelerometer accel;
+extern struct _gyro gyro;
+extern struct _angles angles;
 
 extern struct kalman_filter_t roll_kalman_Filter;
 extern struct kalman_filter_t pitch_kalman_Filter;

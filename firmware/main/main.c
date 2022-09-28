@@ -31,6 +31,7 @@ int main()
     usart_init();
     RetargetInit(&UartHandle);
     TIM3_init();
+    step_motor_pwm_init();
     MPU_Init();
 
     for (;;) {
@@ -38,9 +39,9 @@ int main()
         // HAL_Delay(200);
 
         read_mpu_data();
-        angles.roll = atan2(accel.ay, accel.az) * 180.0 / 3.14;
+        angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
         // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
-        angles.pitch = -atan2(accel.ax, sqrt(accel.ay * accel.ay + accel.az * accel.az)) * 180.0 / 3.14;
+        angles.pitch = -atan2(accel.x, sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0 / 3.14;
 
         deltaT = count - last_count;
         last_count = count;
@@ -48,27 +49,27 @@ int main()
         pitch_kalman_Filter.dt = deltaT * 10 / 1000.0;
         yaw_kalman_Filter.dt   = deltaT * 10 / 1000.0;
 
-        kalman_filter(&roll_kalman_Filter, angles.roll, gyro.gx, &angles.roll, &gyro.gx);
-        kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.gy, &angles.pitch, &gyro.gy);
-        kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.gz, &angles.yaw, &gyro.gz);
+        kalman_filter(&roll_kalman_Filter, angles.roll, gyro.x, &angles.roll, &gyro.x);
+        kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.y, &angles.pitch, &gyro.y);
+        kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.z, &angles.yaw, &gyro.z);
 
-        // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._ax, accel._ay, accel._az);
-        // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._gx, gyro._gx, gyro._gx);
+        // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._x, accel._y, accel._z);
+        // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._x, gyro._x, gyro._x);
 
-        // printf("ACCX :%s\n", double_string(accel.ax, 3));
-        // printf("ACCY :%s\n", double_string(accel.ay, 3));
-        // printf("ACCZ :%s\n", double_string(accel.az, 3));
+        // printf("ACCX :%s\n", double_string(accel.x, 3));
+        // printf("ACCY :%s\n", double_string(accel.y, 3));
+        // printf("ACCZ :%s\n", double_string(accel.z, 3));
 
         // printf("Pitch:%s\n", double_string(angles.pitch, 3));
         // printf("Roll :%s\n", double_string(angles.roll, 3));
 #if 0
         send_mpu6050_data(
-            accel._ax, accel._ay, accel._az, 
-            gyro._gx, gyro._gy, gyro._gz
+            accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
+            gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z
         );
         send_dmp_data(
-            accel._ax, accel._ay, accel._az, 
-            gyro._gx, gyro._gy, gyro._gz, 
+            accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
+            gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z, 
             (int)(angles.roll * 100), 
             (int)(angles.pitch * 100), 
             (int)(angles.yaw * 10)
@@ -76,12 +77,12 @@ int main()
 #endif
 #if 1
         ANO_DT_Send_Senser(
-            accel._ax,
-            accel._ay,
-            accel._az,
-            gyro._gx,
-            gyro._gy,
-            gyro._gz,
+            accel.raw_data_x,
+            accel.raw_data_y,
+            accel.raw_data_z,
+            gyro.raw_data_x,
+            gyro.raw_data_y,
+            gyro.raw_data_z,
             0,
             0,
             0,
@@ -147,7 +148,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef * tim_baseHandle)
         __HAL_RCC_TIM3_CLK_ENABLE();
 
         /* TIM3 interrupt Init */
-        HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+        HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
         HAL_NVIC_EnableIRQ(TIM3_IRQn);
         /* USER CODE BEGIN TIM3_MspInit 1 */
 

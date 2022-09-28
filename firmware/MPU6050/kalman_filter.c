@@ -11,34 +11,34 @@ struct _angles angles = {0};
 void read_mpu_data()
 {
     MPU_Get_Accelerometer(
-        &accel._ax,
-        &accel._ay,
-        &accel._az
+        &accel.raw_data_x,
+        &accel.raw_data_y,
+        &accel.raw_data_z
     );
     MPU_Get_Gyroscope(
-        &gyro._gx,
-        &gyro._gy,
-        &gyro._gz
+        &gyro.raw_data_x,
+        &gyro.raw_data_y,
+        &gyro.raw_data_z
     );
 
     MPU_Get_Temperature();
 
-    accel._ax = accel._ax - 1000;
-    accel._ay = accel._ay + 220;
-    accel._az = accel._az + 100;
+    accel.raw_data_x = accel.raw_data_x - 1000;
+    accel.raw_data_y = accel.raw_data_y + 220;
+    accel.raw_data_z = accel.raw_data_z + 100;
 
-    gyro._gx = gyro._gx - 109;
-    gyro._gy = gyro._gy - 2;
-    gyro._gz = gyro._gz + 10;
+    gyro.raw_data_x = gyro.raw_data_x - 109;
+    gyro.raw_data_y = gyro.raw_data_y - 2;
+    gyro.raw_data_z = gyro.raw_data_z + 10;
 
     // Accelerometer full range 2g
-    accel.ax = accel._ax * ACCE_CONVERT /* 2 * (accel._ax / 32768.0) */;
-    accel.ay = accel._ay * ACCE_CONVERT /* 2 * (accel._ay / 32768.0) */;
-    accel.az = accel._az * ACCE_CONVERT /* 2 * (accel._az / 32768.0) */;
+    accel.x = accel.raw_data_x * ACCE_CONVERT /* 2 * (accel._ax / 32768.0) */;
+    accel.y = accel.raw_data_y * ACCE_CONVERT /* 2 * (accel._ay / 32768.0) */;
+    accel.z = accel.raw_data_z * ACCE_CONVERT /* 2 * (accel._az / 32768.0) */;
     // Gyro full range 2000 deg
-    gyro.gx = gyro._gx * GYRO_CONVERT /* 2000 * (gyro._gx / 32768.0) */;
-    gyro.gy = gyro._gy * GYRO_CONVERT /* 2000 * (gyro._gy / 32768.0) */;
-    gyro.gz = gyro._gz * GYRO_CONVERT /* 2000 * (gyro._gz / 32768.0) */;
+    gyro.x = gyro.raw_data_x * GYRO_CONVERT /* 2000 * (gyro._gx / 32768.0) */;
+    gyro.y = gyro.raw_data_y * GYRO_CONVERT /* 2000 * (gyro._gy / 32768.0) */;
+    gyro.z = gyro.raw_data_z * GYRO_CONVERT /* 2000 * (gyro._gz / 32768.0) */;
 }
 
 struct _recursive {
@@ -64,29 +64,6 @@ float recursive_processing(struct _recursive * recursive, float Y_meas)
 
     return recursive->current_estimate;
 }
-
-#if 0
-struct kalman_filter_t {
-    float dt;        // dt 的取值为 kalman 滤波器采样时间
-    float angle;     // 角度
-    float angle_dot; // 角速度
-    float P[2][2];
-    float Pdot[4];
-    float Q_angle;   // 角度数据置信度
-    float Q_gyro;    // 角速度数据置信度
-    float R_angle;
-    float C_0;
-    float q_bias;
-    float angle_err;
-    float PCt_0;
-    float PCt_1;
-    float E;
-    float K_0;
-    float K_1;
-    float t_0;
-    float t_1;
-};
-#endif
 
 struct kalman_filter_t roll_kalman_Filter = {
     .dt      = 0.01,
