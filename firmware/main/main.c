@@ -31,7 +31,8 @@ int main()
     usart_init();
     RetargetInit(&UartHandle);
     TIM3_init();
-    step_motor_pwm_init();
+    TIM2_init();
+    TIM4_init();
     MPU_Init();
 
     for (;;) {

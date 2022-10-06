@@ -1696,6 +1696,30 @@ main/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/main.c.s
 .PHONY : main/main.c.s
 
+main/motor.obj: main/motor.c.obj
+.PHONY : main/motor.obj
+
+# target to build an object file
+main/motor.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.obj
+.PHONY : main/motor.c.obj
+
+main/motor.i: main/motor.c.i
+.PHONY : main/motor.i
+
+# target to preprocess a source file
+main/motor.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.i
+.PHONY : main/motor.c.i
+
+main/motor.s: main/motor.c.s
+.PHONY : main/motor.s
+
+# target to generate assembly for a file
+main/motor.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.s
+.PHONY : main/motor.c.s
+
 main/retarget.obj: main/retarget.c.obj
 .PHONY : main/retarget.obj
 
@@ -1719,30 +1743,6 @@ main/retarget.s: main/retarget.c.s
 main/retarget.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/retarget.c.s
 .PHONY : main/retarget.c.s
-
-main/step_motor.obj: main/step_motor.c.obj
-.PHONY : main/step_motor.obj
-
-# target to build an object file
-main/step_motor.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.obj
-.PHONY : main/step_motor.c.obj
-
-main/step_motor.i: main/step_motor.c.i
-.PHONY : main/step_motor.i
-
-# target to preprocess a source file
-main/step_motor.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.i
-.PHONY : main/step_motor.c.i
-
-main/step_motor.s: main/step_motor.c.s
-.PHONY : main/step_motor.s
-
-# target to generate assembly for a file
-main/step_motor.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/step_motor.c.s
-.PHONY : main/step_motor.c.s
 
 main/stm32f1xx_hal_msp.obj: main/stm32f1xx_hal_msp.c.obj
 .PHONY : main/stm32f1xx_hal_msp.obj
@@ -2117,12 +2117,12 @@ help:
 	@echo ... main/main.obj
 	@echo ... main/main.i
 	@echo ... main/main.s
+	@echo ... main/motor.obj
+	@echo ... main/motor.i
+	@echo ... main/motor.s
 	@echo ... main/retarget.obj
 	@echo ... main/retarget.i
 	@echo ... main/retarget.s
-	@echo ... main/step_motor.obj
-	@echo ... main/step_motor.i
-	@echo ... main/step_motor.s
 	@echo ... main/stm32f1xx_hal_msp.obj
 	@echo ... main/stm32f1xx_hal_msp.i
 	@echo ... main/stm32f1xx_hal_msp.s
