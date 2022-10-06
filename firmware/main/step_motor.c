@@ -4,7 +4,8 @@
 /* TIM handle declaration */
 TIM_HandleTypeDef TimHandle2;
 TIM_HandleTypeDef TimHandle4;
-__IO uint16_t cnt = 255;
+__IO uint16_t cnt2 = 255;
+__IO uint16_t cnt4 = 255;
 
 static void pwm2_gpio_init();
 static void pwm4_gpio_init();
@@ -91,17 +92,24 @@ static void Error_Handler(void)
 
 void TIM2_IRQHandler(void)
 {
-    __IO uint16_t count = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
-    count = __HAL_TIM_GetCounter(&TimHandle2); // 获取捕获比较寄存器的值
-    __HAL_TIM_SET_COMPARE(&TimHandle2,TIM_CHANNEL_2,(count+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+    if (__HAL_TIM_GET_FLAG(&TimHandle2, TIM_IT_CC2) != RESET) {
+        __IO uint16_t count = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
+        count = __HAL_TIM_GetCounter(&TimHandle2); // 获取捕获比较寄存器的值
+        __HAL_TIM_SET_COMPARE(&TimHandle2,TIM_CHANNEL_2,(count+cnt2) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
+        __HAL_TIM_CLEAR_IT(&TimHandle2, TIM_IT_CC2);
+    }
 }
 
 void TIM4_IRQHandler(void)
 {
-    __IO uint16_t count = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
-    count = __HAL_TIM_GetCounter(&TimHandle4); // 获取捕获比较寄存器的值
-    __HAL_TIM_SET_COMPARE(&TimHandle4,TIM_CHANNEL_4,(count+cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+    if (__HAL_TIM_GET_FLAG(&TimHandle4, TIM_IT_CC4) != RESET) {
+        __IO uint16_t count = 0; // 因为捕获比较寄存器的值是16位的设置的值不能超过65535 如果超过那么会自动减65535(溢出)
+        count = __HAL_TIM_GetCounter(&TimHandle4); // 获取捕获比较寄存器的值
+        __HAL_TIM_SET_COMPARE(&TimHandle4,TIM_CHANNEL_4,(count+cnt4) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+
+        __HAL_TIM_CLEAR_IT(&TimHandle4, TIM_IT_CC4);
+    }
 }
 
 static void pwm2_gpio_init()
