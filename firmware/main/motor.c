@@ -5,14 +5,18 @@
 TIM_HandleTypeDef Tim2Handle;
 TIM_HandleTypeDef Tim4Handle;
 
-__IO uint16_t tim2cnt = 255;
-__IO uint16_t tim4cnt = 255;
+const short cnt_list[100];
+__IO uint16_t tim2cnt = 50;
+__IO uint16_t tim4cnt = 50;
 
-static void TIM2_gpio_init();
-static void TIM4_gpio_init();
+static void PWM_tim2_gpio_init();
+static void PWM_tim4_gpio_init();
 static void Error_Handler(void);
 
-void TIM2_init()
+/*********************************************************
+ *         RIGHT MOTOR, PWM MINI 120Hz, MAX 1800Hz
+ ********************************************************/
+void PWM_tim2_init()
 {
     /* Peripheral clock enable */
     __HAL_RCC_TIM2_CLK_ENABLE();
@@ -47,12 +51,15 @@ void TIM2_init()
         Error_Handler();
     }
 
-    TIM2_gpio_init();
+    PWM_tim2_gpio_init();
 
     HAL_TIM_OC_Start_IT(&Tim2Handle, TIM_CHANNEL_2);
 }
 
-void TIM4_init()
+/*********************************************************
+ *         LEFT MOTOR, PWM MINI 120Hz, MAX 1800Hz
+ ********************************************************/
+void PWM_tim4_init()
 {
     /* Peripheral clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
@@ -87,7 +94,7 @@ void TIM4_init()
         Error_Handler();
     }
 
-    TIM4_gpio_init();
+    PWM_tim4_gpio_init();
 
     HAL_TIM_OC_Start_IT(&Tim4Handle, TIM_CHANNEL_4);
 }
@@ -97,7 +104,7 @@ void TIM2_IRQHandler(void)
     if (__HAL_TIM_GET_FLAG(&Tim2Handle, TIM_IT_CC2) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim2Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim2Handle,TIM_CHANNEL_2,(count+tim2cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim2Handle, TIM_CHANNEL_2, (count + cnt_list[tim2cnt]) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim2Handle, TIM_IT_CC2);
     }
@@ -108,13 +115,13 @@ void TIM4_IRQHandler(void)
     if (__HAL_TIM_GET_FLAG(&Tim4Handle, TIM_IT_CC4) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim4Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim4Handle,TIM_CHANNEL_4,(count+tim4cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim4Handle, TIM_CHANNEL_4, (count + cnt_list[tim4cnt]) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim4Handle, TIM_IT_CC4);
     }
 }
 
-static void TIM2_gpio_init()
+static void PWM_tim2_gpio_init()
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();                                  // 开启 GPIOA 时钟
 
@@ -126,7 +133,7 @@ static void TIM2_gpio_init()
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
-static void TIM4_gpio_init()
+static void PWM_tim4_gpio_init()
 {
     __HAL_RCC_GPIOB_CLK_ENABLE();                                  // 开启 GPIOB 时钟
 
@@ -144,3 +151,84 @@ static void Error_Handler(void)
     {
     }
 }
+
+void PWM_tim2_pulse_set(int pwm)
+{
+    tim2cnt = pwm;
+}
+
+void PWM_tim4_pulse_set(int pwm)
+{
+    tim4cnt = pwm;
+}
+
+const short cnt_list[100] = {
+    416,    373,    338,    309,    285,
+    264,    246,    230,    217,    204,
+    193,    183,    175,    167,    159,
+    152,    146,    141,    135,    130,
+    126,    122,    118,    114,    110,
+    107,    104,    101,    98, 96,
+    93, 91, 89, 86, 84,
+    82, 81, 79, 77, 75,
+    74, 72, 71, 70, 68,
+    67, 66, 65, 63, 62,
+    61, 60, 59, 58, 57,
+    56, 56, 55, 54, 53,
+    52, 51, 51, 50, 49,
+    49, 48, 47, 47, 46,
+    46, 45, 44, 44, 43,
+    43, 42, 42, 41, 41,
+    40, 40, 39, 39, 39,
+    38, 38, 37, 37, 37,
+    36, 36, 35, 35, 35,
+    34, 34, 34, 33, 33,
+};
+
+#if 0
+#include <stdio.h>
+
+int main()
+{
+    printf("const short cnt_list[100] = {\n");
+
+    unsigned int j = 0;
+
+    for (unsigned int i = 0; i < 100; i++) {
+        printf("\t%d,", (int)(100000 / (120 + 13.8 * i) / 2));
+        
+        j++;
+        if (j == 5) {
+            printf("\n");
+            j = 0;
+        }
+    }
+
+    printf("};");
+
+   return 0;
+}
+
+const short cnt_list[100] = {
+    416,    373,    338,    309,    285,
+    264,    246,    230,    217,    204,
+    193,    183,    175,    167,    159,
+    152,    146,    141,    135,    130,
+    126,    122,    118,    114,    110,
+    107,    104,    101,    98, 96,
+    93, 91, 89, 86, 84,
+    82, 81, 79, 77, 75,
+    74, 72, 71, 70, 68,
+    67, 66, 65, 63, 62,
+    61, 60, 59, 58, 57,
+    56, 56, 55, 54, 53,
+    52, 51, 51, 50, 49,
+    49, 48, 47, 47, 46,
+    46, 45, 44, 44, 43,
+    43, 42, 42, 41, 41,
+    40, 40, 39, 39, 39,
+    38, 38, 37, 37, 37,
+    36, 36, 35, 35, 35,
+    34, 34, 34, 33, 33,
+};
+#endif

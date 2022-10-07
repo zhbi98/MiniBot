@@ -26,18 +26,23 @@ unsigned int deltaT = 0;
 
 int main()
 {
+    int pwm = 0;
     HAL_Init();
     SystemClock_Config();
     usart_init();
     RetargetInit(&UartHandle);
     TIM3_init();
-    TIM2_init();
-    TIM4_init();
+    PWM_tim2_init();
+    PWM_tim4_init();
     MPU_Init();
 
     for (;;) {
         /* Insert delay 100 ms */
-        // HAL_Delay(200);
+        HAL_Delay(200);
+        PWM_tim4_pulse_set(pwm);
+        pwm++;
+        if (pwm >= 100)
+            pwm = 0;
 
         read_mpu_data();
         angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
