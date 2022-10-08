@@ -1672,6 +1672,30 @@ main/demo.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.s
 .PHONY : main/demo.c.s
 
+main/lv8731v.obj: main/lv8731v.c.obj
+.PHONY : main/lv8731v.obj
+
+# target to build an object file
+main/lv8731v.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.obj
+.PHONY : main/lv8731v.c.obj
+
+main/lv8731v.i: main/lv8731v.c.i
+.PHONY : main/lv8731v.i
+
+# target to preprocess a source file
+main/lv8731v.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.i
+.PHONY : main/lv8731v.c.i
+
+main/lv8731v.s: main/lv8731v.c.s
+.PHONY : main/lv8731v.s
+
+# target to generate assembly for a file
+main/lv8731v.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.s
+.PHONY : main/lv8731v.c.s
+
 main/main.obj: main/main.c.obj
 .PHONY : main/main.obj
 
@@ -1695,30 +1719,6 @@ main/main.s: main/main.c.s
 main/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/main.c.s
 .PHONY : main/main.c.s
-
-main/motor.obj: main/motor.c.obj
-.PHONY : main/motor.obj
-
-# target to build an object file
-main/motor.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.obj
-.PHONY : main/motor.c.obj
-
-main/motor.i: main/motor.c.i
-.PHONY : main/motor.i
-
-# target to preprocess a source file
-main/motor.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.i
-.PHONY : main/motor.c.i
-
-main/motor.s: main/motor.c.s
-.PHONY : main/motor.s
-
-# target to generate assembly for a file
-main/motor.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/motor.c.s
-.PHONY : main/motor.c.s
 
 main/retarget.obj: main/retarget.c.obj
 .PHONY : main/retarget.obj
@@ -2114,12 +2114,12 @@ help:
 	@echo ... main/demo.obj
 	@echo ... main/demo.i
 	@echo ... main/demo.s
+	@echo ... main/lv8731v.obj
+	@echo ... main/lv8731v.i
+	@echo ... main/lv8731v.s
 	@echo ... main/main.obj
 	@echo ... main/main.i
 	@echo ... main/main.s
-	@echo ... main/motor.obj
-	@echo ... main/motor.i
-	@echo ... main/motor.s
 	@echo ... main/retarget.obj
 	@echo ... main/retarget.i
 	@echo ... main/retarget.s
