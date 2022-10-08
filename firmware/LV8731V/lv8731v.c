@@ -9,10 +9,10 @@ __IO uint16_t tim2cnt = 0;
 __IO uint16_t tim4cnt = 0;
 
 static void lv8731v_gpio_init();
-static void lv8731v_right_timer_init();
-static void lv8731v_left_timer_init();
-static void lv8731v_right_timer_gpio_init();
-static void lv8731v_left_timer_gpio_init();
+static void lv8731v_R_timer_init();
+static void lv8731v_L_timer_init();
+static void lv8731v_R_timer_gpio_init();
+static void lv8731v_L_timer_gpio_init();
 static void Error_Handler(void);
 
 static void lv8731v_gpio_init()
@@ -91,7 +91,7 @@ static void lv8731v_gpio_init()
 /*********************************************************
  *         RIGHT MOTOR, PWM MINI 120Hz, MAX 6000Hz
  ********************************************************/
-static void lv8731v_right_timer_init()
+static void lv8731v_R_timer_init()
 {
     /* Peripheral clock enable */
     __HAL_RCC_TIM2_CLK_ENABLE();
@@ -102,7 +102,6 @@ static void lv8731v_right_timer_init()
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
-
 
     Tim2Handle.Instance = TIM2;
     Tim2Handle.Init.Prescaler = 720 - 1;
@@ -126,7 +125,7 @@ static void lv8731v_right_timer_init()
         Error_Handler();
     }
 
-    lv8731v_right_timer_gpio_init();
+    lv8731v_R_timer_gpio_init();
 
     HAL_TIM_OC_Start_IT(&Tim2Handle, TIM_CHANNEL_2);
 }
@@ -134,7 +133,7 @@ static void lv8731v_right_timer_init()
 /*********************************************************
  *         LEFT MOTOR, PWM MINI 120Hz, MAX 6000Hz
  ********************************************************/
-static void lv8731v_left_timer_init()
+static void lv8731v_L_timer_init()
 {
     /* Peripheral clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
@@ -145,7 +144,6 @@ static void lv8731v_left_timer_init()
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
-
 
     Tim4Handle.Instance = TIM4;
     Tim4Handle.Init.Prescaler = 720 - 1;
@@ -169,22 +167,20 @@ static void lv8731v_left_timer_init()
         Error_Handler();
     }
 
-    lv8731v_left_timer_gpio_init();
+    lv8731v_L_timer_gpio_init();
 
     HAL_TIM_OC_Start_IT(&Tim4Handle, TIM_CHANNEL_4);
 }
 
-#define FREQ_TIM  100000U // 100KHz
-#define FREQ_MINI 0U      // 150Hz
-#define FREQ_MAX  6000U   // 6000HZ
-#define FREQ_INCR 10U     // 10Hz
+#define TIM_CLK    100000U // 100KHz
+#define PULSE_MINI 0U      // 150Hz
+#define PULSE_MAX  6000U   // 6000HZ
+#define PULSE_INCR 10U     // 10Hz
 
 void TIM2_IRQHandler(void)
 {
-    int target = (FREQ_MINI + FREQ_INCR * tim2cnt) * 2;
-    if (target == 0)
-        target = 1;
-    int division = (int)(FREQ_TIM / target);
+    int target = (PULSE_MINI + PULSE_INCR * tim2cnt) * 2;
+    int division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target);
 
     if (__HAL_TIM_GET_FLAG(&Tim2Handle, TIM_IT_CC2) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
@@ -197,10 +193,8 @@ void TIM2_IRQHandler(void)
 
 void TIM4_IRQHandler(void)
 {
-    int target = (FREQ_MINI + FREQ_INCR * tim4cnt) * 2;
-    if (target == 0)
-        target = 1;
-    int division = (int)(FREQ_TIM / target);
+    int target = (PULSE_MINI + PULSE_INCR * tim4cnt) * 2;
+    int division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target);
 
     if (__HAL_TIM_GET_FLAG(&Tim4Handle, TIM_IT_CC4) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
@@ -211,28 +205,28 @@ void TIM4_IRQHandler(void)
     }
 }
 
-static void lv8731v_right_timer_gpio_init()
+static void lv8731v_R_timer_gpio_init()
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();                                  // 开启 GPIOA 时钟
 
     GPIO_InitTypeDef GPIO_InitStruct = {0};                        // 结构体
-    GPIO_InitStruct.Pin = GPIO_PIN_1;                              // PA1
+    GPIO_InitStruct.Pin = R_STEP_PIN/*GPIO_PIN_1*/;                // PA1
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP/*GPIO_MODE_OUTPUT_PP*/; // 推挽输出
     GPIO_InitStruct.Pull = GPIO_PULLUP;                            // 上拉
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;                  // 高速
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(R_STEP_GPIO/*GPIOA*/, &GPIO_InitStruct);
 }
 
-static void lv8731v_left_timer_gpio_init()
+static void lv8731v_L_timer_gpio_init()
 {
     __HAL_RCC_GPIOB_CLK_ENABLE();                                  // 开启 GPIOB 时钟
 
     GPIO_InitTypeDef GPIO_InitStruct = {0};                        // 结构体
-    GPIO_InitStruct.Pin = GPIO_PIN_9;                              // PB9
+    GPIO_InitStruct.Pin = L_STEP_PIN/*GPIO_PIN_9*/;                // PB9
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP/*GPIO_MODE_OUTPUT_PP*/; // 推挽输出
     GPIO_InitStruct.Pull = GPIO_PULLUP;                            // 上拉
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;                  // 高速
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    HAL_GPIO_Init(L_STEP_GPIO/*GPIOB*/, &GPIO_InitStruct);
 }
 
 static void Error_Handler(void)
@@ -245,36 +239,48 @@ static void Error_Handler(void)
 void lv8731v_init()
 {
     lv8731v_gpio_init();
-    lv8731v_right_timer_init();
-    lv8731v_left_timer_init();
+    lv8731v_R_timer_init();
+    lv8731v_L_timer_init();
 }
 
-void lv8731_right_speed(int speed)
+void lv8731_R_speed(int speed)
 {
     tim2cnt = speed;
 }
 
-void lv8731_left_speed(int speed)
+void lv8731_L_speed(int speed)
 {
     tim4cnt = speed;
+}
+
+void lv8731_R_dir(unsigned char dir)
+{
+    GPIO_PinState state = dir == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET;
+    HAL_GPIO_WritePin(R_FR_GPIO, R_FR_PIN, state);
+}
+
+void lv8731_L_dir(unsigned char dir)
+{
+    GPIO_PinState state = dir == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET;
+    HAL_GPIO_WritePin(L_FR_GPIO, L_FR_PIN, state);
 }
 
 #if 0
 #include <stdio.h>
 
-#define FREQ_TIM  100000U // 100KHz
-#define FREQ_MINI 150U    // 150Hz
-#define FREQ_MAX  6000U   // 6000HZ
-#define FREQ_INCR 58.5F   // (FREQ_MAX - FREQ_MINI) / 100
+#define TIM_CLK    100000U // 100KHz
+#define PULSE_MINI 150U    // 150Hz
+#define PULSE_MAX  6000U   // 6000HZ
+#define PULSE_INCR 58.5F   // (PULSE_MAX - PULSE_MINI) / 100
 
-void generate_pwm_counter_value()
+void timer_counter_value()
 {
     unsigned int j = 0;
 
     printf("const short cnt_list[100] = {\n\t");
 
     for (unsigned int i = 0; i < 100; i++) {
-        printf("%-3d, ", (int)(FREQ_TIM / (FREQ_MINI + FREQ_INCR * i) / 2));
+        printf("%-3d, ", (int)(TIM_CLK / (PULSE_MINI + PULSE_INCR * i) / 2));
         j++;
         if (j == 5) {
             printf("\n\t");

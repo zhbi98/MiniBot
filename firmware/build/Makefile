@@ -128,6 +128,30 @@ MiniBot.elf/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/build
 .PHONY : MiniBot.elf/fast
 
+LV8731V/lv8731v.obj: LV8731V/lv8731v.c.obj
+.PHONY : LV8731V/lv8731v.obj
+
+# target to build an object file
+LV8731V/lv8731v.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/LV8731V/lv8731v.c.obj
+.PHONY : LV8731V/lv8731v.c.obj
+
+LV8731V/lv8731v.i: LV8731V/lv8731v.c.i
+.PHONY : LV8731V/lv8731v.i
+
+# target to preprocess a source file
+LV8731V/lv8731v.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/LV8731V/lv8731v.c.i
+.PHONY : LV8731V/lv8731v.c.i
+
+LV8731V/lv8731v.s: LV8731V/lv8731v.c.s
+.PHONY : LV8731V/lv8731v.s
+
+# target to generate assembly for a file
+LV8731V/lv8731v.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/LV8731V/lv8731v.c.s
+.PHONY : LV8731V/lv8731v.c.s
+
 MPU6050/MPU6050.obj: MPU6050/MPU6050.c.obj
 .PHONY : MPU6050/MPU6050.obj
 
@@ -1672,30 +1696,6 @@ main/demo.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/demo.c.s
 .PHONY : main/demo.c.s
 
-main/lv8731v.obj: main/lv8731v.c.obj
-.PHONY : main/lv8731v.obj
-
-# target to build an object file
-main/lv8731v.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.obj
-.PHONY : main/lv8731v.c.obj
-
-main/lv8731v.i: main/lv8731v.c.i
-.PHONY : main/lv8731v.i
-
-# target to preprocess a source file
-main/lv8731v.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.i
-.PHONY : main/lv8731v.c.i
-
-main/lv8731v.s: main/lv8731v.c.s
-.PHONY : main/lv8731v.s
-
-# target to generate assembly for a file
-main/lv8731v.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/lv8731v.c.s
-.PHONY : main/lv8731v.c.s
-
 main/main.obj: main/main.c.obj
 .PHONY : main/main.obj
 
@@ -1816,6 +1816,30 @@ main/syscalls.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/syscalls.c.s
 .PHONY : main/syscalls.c.s
 
+main/task.obj: main/task.c.obj
+.PHONY : main/task.obj
+
+# target to build an object file
+main/task.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/task.c.obj
+.PHONY : main/task.c.obj
+
+main/task.i: main/task.c.i
+.PHONY : main/task.i
+
+# target to preprocess a source file
+main/task.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/task.c.i
+.PHONY : main/task.c.i
+
+main/task.s: main/task.c.s
+.PHONY : main/task.s
+
+# target to generate assembly for a file
+main/task.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/main/task.c.s
+.PHONY : main/task.c.s
+
 main/usart.obj: main/usart.c.obj
 .PHONY : main/usart.obj
 
@@ -1921,6 +1945,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... MiniBot.elf
+	@echo ... LV8731V/lv8731v.obj
+	@echo ... LV8731V/lv8731v.i
+	@echo ... LV8731V/lv8731v.s
 	@echo ... MPU6050/MPU6050.obj
 	@echo ... MPU6050/MPU6050.i
 	@echo ... MPU6050/MPU6050.s
@@ -2114,9 +2141,6 @@ help:
 	@echo ... main/demo.obj
 	@echo ... main/demo.i
 	@echo ... main/demo.s
-	@echo ... main/lv8731v.obj
-	@echo ... main/lv8731v.i
-	@echo ... main/lv8731v.s
 	@echo ... main/main.obj
 	@echo ... main/main.i
 	@echo ... main/main.s
@@ -2132,6 +2156,9 @@ help:
 	@echo ... main/syscalls.obj
 	@echo ... main/syscalls.i
 	@echo ... main/syscalls.s
+	@echo ... main/task.obj
+	@echo ... main/task.i
+	@echo ... main/task.s
 	@echo ... main/usart.obj
 	@echo ... main/usart.i
 	@echo ... main/usart.s

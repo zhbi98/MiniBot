@@ -37,7 +37,9 @@
 #define R_FR_CLOCK_ENABLE()   __HAL_RCC_GPIOB_CLK_ENABLE()
 
 extern void lv8731v_init();
-extern void lv8731_right_speed(int speed);
-extern void lv8731_left_speed(int speed);
+extern void lv8731_R_speed(int speed);
+extern void lv8731_L_speed(int speed);
+extern void lv8731_R_dir(unsigned char dir);
+extern void lv8731_L_dir(unsigned char dir);
 
 #endif

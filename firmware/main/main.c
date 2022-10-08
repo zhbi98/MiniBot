@@ -13,23 +13,70 @@
 #include "kalman_filter.h"
 #include "ano_tech.h"
 #include "lv8731v.h"
+#include "task.h"
 
 void SystemClock_Config(void);
 void TIM3_init();
+
+unsigned int last_count = 0;
+unsigned int count = 0;
+unsigned int deltaT = 0;
+
+unsigned int Task_01()
+{
+    read_mpu_data();
+    angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
+    // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
+    angles.pitch = -atan2(accel.x, sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0 / 3.14;
+
+    deltaT = count - last_count;
+    last_count = count;
+    roll_kalman_Filter.dt  = deltaT * 10 / 1000.0;
+    pitch_kalman_Filter.dt = deltaT * 10 / 1000.0;
+    yaw_kalman_Filter.dt   = deltaT * 10 / 1000.0;
+
+    kalman_filter(&roll_kalman_Filter, angles.roll, gyro.x, &angles.roll, &gyro.x);
+    kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.y, &angles.pitch, &gyro.y);
+    kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.z, &angles.yaw, &gyro.z);
+
+    // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._x, accel._y, accel._z);
+    // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._x, gyro._x, gyro._x);
+
+    // printf("ACCX :%s\n", double_string(accel.x, 3));
+    // printf("ACCY :%s\n", double_string(accel.y, 3));
+    // printf("ACCZ :%s\n", double_string(accel.z, 3));
+
+    // printf("Pitch:%s\n", double_string(angles.pitch, 3));
+    // printf("Roll :%s\n", double_string(angles.roll, 3));
+    return 0;
+}
+
+unsigned int Task_02()
+{
+    return 0;
+}
+
+unsigned int Task_03()
+{
+    static unsigned int speed = 0;
+    lv8731_R_speed(speed);
+    lv8731_L_speed(speed);
+    speed++;
+    if (speed >= 600)
+        speed = 600;
+
+    printf("Task_03");
+    return 0;
+}
 
 /**
  * Y:tan(pitch) = tan(Axz) = Rx/Rz
  * X:tan(roll)  = tan(Ayz) = Ry/Rz
  */
 
-unsigned int last_count = 0;
-unsigned int count = 0;
-unsigned int deltaT = 0;
 
 int main()
 {
-    unsigned int speed = 0;
-
     HAL_Init();
     SystemClock_Config();
     usart_init();
@@ -38,39 +85,14 @@ int main()
     lv8731v_init();
     MPU_Init();
 
+    SCH_Add_Task(Task_01, 0, 1);
+    SCH_Add_Task(Task_02, 0, 1);
+    SCH_Add_Task(Task_03, 0, 20);
+
     for (;;) {
         /* Insert delay 100 ms */
-        HAL_Delay(200);
-        lv8731_right_speed(speed);
-        lv8731_left_speed(speed);
-        speed++;
-        if (speed >= 600)
-            speed = 600;
-
-        read_mpu_data();
-        angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
-        // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
-        angles.pitch = -atan2(accel.x, sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0 / 3.14;
-
-        deltaT = count - last_count;
-        last_count = count;
-        roll_kalman_Filter.dt  = deltaT * 10 / 1000.0;
-        pitch_kalman_Filter.dt = deltaT * 10 / 1000.0;
-        yaw_kalman_Filter.dt   = deltaT * 10 / 1000.0;
-
-        kalman_filter(&roll_kalman_Filter, angles.roll, gyro.x, &angles.roll, &gyro.x);
-        kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.y, &angles.pitch, &gyro.y);
-        kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.z, &angles.yaw, &gyro.z);
-
-        // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._x, accel._y, accel._z);
-        // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._x, gyro._x, gyro._x);
-
-        // printf("ACCX :%s\n", double_string(accel.x, 3));
-        // printf("ACCY :%s\n", double_string(accel.y, 3));
-        // printf("ACCZ :%s\n", double_string(accel.z, 3));
-
-        // printf("Pitch:%s\n", double_string(angles.pitch, 3));
-        // printf("Roll :%s\n", double_string(angles.roll, 3));
+        // HAL_Delay(100);
+        SCH_Dispatch_Tasks();
 #if 0
         send_mpu6050_data(
             accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
@@ -84,7 +106,7 @@ int main()
             (int)(angles.yaw * 10)
         );
 #endif
-#if 1
+#if 0
         ANO_DT_Send_Senser(
             accel.raw_data_x,
             accel.raw_data_y,
@@ -191,7 +213,7 @@ void TIM3_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &Tim3Handle) {
-        // printf("%s\n", "TIM3");
+        TIMX_IRQHandler_user();
         count++;
     }
 }
