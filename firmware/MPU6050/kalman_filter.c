@@ -41,12 +41,6 @@ void read_mpu_data()
     gyro.z = gyro.raw_data_z * GYRO_CONVERT /* 2000 * (gyro._gz / 32768.0) */;
 }
 
-struct _recursive {
-    float current_estimate;
-    float last_estimste;
-    float K_gain;
-};
-
 #if 0
 struct _recursive ax_recursive = {.K_gain = 0.4};
 struct _recursive ay_recursive = {.K_gain = 0.4};

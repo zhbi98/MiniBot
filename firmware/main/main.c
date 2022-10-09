@@ -22,8 +22,21 @@ unsigned int last_count = 0;
 unsigned int count = 0;
 unsigned int deltaT = 0;
 
-unsigned int Task_01()
+float Med_Angle=-1.00;      // 机械中值，能使得小车真正平衡住的角度 
+float Target_Speed=0;     // 期望速度。---二次开发接口，用于控制小车前进后退及其速度。
+
+int Vertical_out,Velocity_out,Turn_out; // 直立环&速度环&转向环的输出变量
+
+float 
+  Vertical_Kp=90,
+  Vertical_Kd=1.2;      // 直立环Kp、Kd
+
+uint32_t Task_01()
 {
+    /**
+     * Y:tan(pitch) = tan(Axz) = Rx/Rz
+     * X:tan(roll)  = tan(Ayz) = Ry/Rz
+     */
     read_mpu_data();
     angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
     // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
@@ -38,42 +51,42 @@ unsigned int Task_01()
     kalman_filter(&roll_kalman_Filter, angles.roll, gyro.x, &angles.roll, &gyro.x);
     kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.y, &angles.pitch, &gyro.y);
     kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.z, &angles.yaw, &gyro.z);
-
-    // printf("ACC:x=%04d,y=%04d,z=%04d\n", accel._x, accel._y, accel._z);
-    // printf("GRO:x=%04d,y=%04d,z=%04d\n", gyro._x, gyro._x, gyro._x);
-
-    // printf("ACCX :%s\n", double_string(accel.x, 3));
-    // printf("ACCY :%s\n", double_string(accel.y, 3));
-    // printf("ACCZ :%s\n", double_string(accel.z, 3));
-
-    // printf("Pitch:%s\n", double_string(angles.pitch, 3));
-    // printf("Roll :%s\n", double_string(angles.roll, 3));
     return 0;
 }
 
-unsigned int Task_02()
+int Vertical(float Med, float Angle, float gyro_Y) 
 {
-    return 0;
-}
+  int PWM_out;
+  
+  PWM_out = Vertical_Kp*(Angle-Med)+Vertical_Kd*(gyro_Y-0);
+  
+  return (int)PWM_out;
+} 
 
-unsigned int Task_03()
+uint32_t Task_02()
 {
-    static unsigned int speed = 0;
+    int speed = Vertical(0,angles.roll,gyro.x);
+    
+    if (speed < 0) {
+        lv8731_L_dir(1); // Fall back
+        lv8731_R_dir(0); // Fall back
+        speed = abs(speed);
+    } else {
+        lv8731_L_dir(0); // Forward
+        lv8731_R_dir(1); // Forward
+        speed = abs(speed);
+    }
+
     lv8731_R_speed(speed);
     lv8731_L_speed(speed);
-    speed++;
-    if (speed >= 600)
-        speed = 600;
-
-    printf("Task_03");
     return 0;
 }
 
-/**
- * Y:tan(pitch) = tan(Axz) = Rx/Rz
- * X:tan(roll)  = tan(Ayz) = Ry/Rz
- */
-
+uint32_t Task_03()
+{
+    printf("Task_03\n");
+    return 0;
+}
 
 int main()
 {
@@ -87,18 +100,18 @@ int main()
 
     SCH_Add_Task(Task_01, 0, 1);
     SCH_Add_Task(Task_02, 0, 1);
-    SCH_Add_Task(Task_03, 0, 20);
+    SCH_Add_Task(Task_03, 0, 100);
 
     for (;;) {
         /* Insert delay 100 ms */
         // HAL_Delay(100);
         SCH_Dispatch_Tasks();
 #if 0
-        send_mpu6050_data(
+        send_sensor_data(
             accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
             gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z
         );
-        send_dmp_data(
+        send_status_data(
             accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
             gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z, 
             (int)(angles.roll * 100), 

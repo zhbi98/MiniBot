@@ -175,7 +175,7 @@ static void lv8731v_L_timer_init()
 #define TIM_CLK    100000U // 100KHz
 #define PULSE_MINI 0U      // 150Hz
 #define PULSE_MAX  6000U   // 6000HZ
-#define PULSE_INCR 10U     // 10Hz
+#define PULSE_INCR 2U      // 2Hz
 
 void TIM2_IRQHandler(void)
 {
@@ -245,11 +245,19 @@ void lv8731v_init()
 
 void lv8731_R_speed(int speed)
 {
+    if (speed > (PULSE_MAX / PULSE_INCR))
+        speed = (PULSE_MAX / PULSE_INCR);
+    if (speed < 0)
+        speed = 0;
     tim2cnt = speed;
 }
 
 void lv8731_L_speed(int speed)
 {
+    if (speed > (PULSE_MAX / PULSE_INCR))
+        speed = (PULSE_MAX / PULSE_INCR);
+    if (speed < 0)
+        speed = 0;
     tim4cnt = speed;
 }
 

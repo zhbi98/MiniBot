@@ -19,11 +19,6 @@ struct _gyro {
     short raw_data_x;
     short raw_data_y;
     short raw_data_z;
-
-    short offset_x;
-    short offset_y;
-    short offset_z;
-
     float x;
     float y;
     float z;
@@ -33,6 +28,12 @@ struct _angles {
     float pitch;
     float roll;
     float yaw;
+};
+
+struct _recursive {
+    float current_estimate;
+    float last_estimste;
+    float K_gain;
 };
 
 struct kalman_filter_t {
