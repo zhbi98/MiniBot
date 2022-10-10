@@ -1,62 +1,58 @@
 
 #include "kalman_filter.h"
 
-struct _accelerometer accel = {0};
+struct _acc acc = {0};
 struct _gyro gyro = {0};
-struct _angles angles = {0};
+struct _angle angle = {0};
 
-#define ACCE_CONVERT (2.0 / 32768.0) // Accelerometer full range 2g
-#define GYRO_CONVERT (2000.0 / 32768.0) // Gyro full range 2000 deg
+void check_gyro_bias()
+{
+    int data[3] = {0};
 
-void read_mpu_data()
+    info("Place the gyroscope horizontally and still.");
+
+    for (unsigned char check = 0; check < 255; check++) {
+        MPU_Get_Gyroscope(&gyro.raw_x, &gyro.raw_y, &gyro.raw_z);
+
+        data[0] += gyro.raw_x;
+        data[1] += gyro.raw_y;
+        data[2] += gyro.raw_z;
+
+        sleep_ms(50);
+    }
+
+    info("gyrox:%d", (int)(data[0] / 255 + 0.5));
+    info("gyroy:%d", (int)(data[1] / 255 + 0.5));
+    info("gyroz:%d", (int)(data[2] / 255 + 0.5));
+}
+
+void get_mpu_raw_data()
 {
     MPU_Get_Accelerometer(
-        &accel.raw_data_x,
-        &accel.raw_data_y,
-        &accel.raw_data_z
+        &acc.raw_x,
+        &acc.raw_y,
+        &acc.raw_z
     );
     MPU_Get_Gyroscope(
-        &gyro.raw_data_x,
-        &gyro.raw_data_y,
-        &gyro.raw_data_z
+        &gyro.raw_x,
+        &gyro.raw_y,
+        &gyro.raw_z
     );
 
     MPU_Get_Temperature();
 
-    accel.raw_data_x = accel.raw_data_x - 1000;
-    accel.raw_data_y = accel.raw_data_y + 220;
-    accel.raw_data_z = accel.raw_data_z + 100;
-
-    gyro.raw_data_x = gyro.raw_data_x - 109;
-    gyro.raw_data_y = gyro.raw_data_y - 2;
-    gyro.raw_data_z = gyro.raw_data_z + 10;
+    gyro.raw_x = gyro.raw_x - GYROX_BIAS;
+    gyro.raw_y = gyro.raw_y - GYROY_BIAS;
+    gyro.raw_z = gyro.raw_z - GYROZ_BIAS;
 
     // Accelerometer full range 2g
-    accel.x = accel.raw_data_x * ACCE_CONVERT /* 2 * (accel._ax / 32768.0) */;
-    accel.y = accel.raw_data_y * ACCE_CONVERT /* 2 * (accel._ay / 32768.0) */;
-    accel.z = accel.raw_data_z * ACCE_CONVERT /* 2 * (accel._az / 32768.0) */;
+    acc.x = acc.raw_x * ACC /* 2 * (acc._ax / 32768.0) */;
+    acc.y = acc.raw_y * ACC /* 2 * (acc._ay / 32768.0) */;
+    acc.z = acc.raw_z * ACC /* 2 * (acc._az / 32768.0) */;
     // Gyro full range 2000 deg
-    gyro.x = gyro.raw_data_x * GYRO_CONVERT /* 2000 * (gyro._gx / 32768.0) */;
-    gyro.y = gyro.raw_data_y * GYRO_CONVERT /* 2000 * (gyro._gy / 32768.0) */;
-    gyro.z = gyro.raw_data_z * GYRO_CONVERT /* 2000 * (gyro._gz / 32768.0) */;
-}
-
-#if 0
-struct _recursive ax_recursive = {.K_gain = 0.4};
-struct _recursive ay_recursive = {.K_gain = 0.4};
-struct _recursive az_recursive = {.K_gain = 0.4};
-struct _recursive gx_recursive = {.K_gain = 0.4};
-struct _recursive gy_recursive = {.K_gain = 0.4};
-struct _recursive gz_recursive = {.K_gain = 0.4};
-#endif
-
-float recursive_processing(struct _recursive * recursive, float Y_meas)
-{
-    recursive->current_estimate = recursive->last_estimste + recursive->K_gain * (Y_meas - recursive->last_estimste);
-
-    recursive->last_estimste = recursive->current_estimate;
-
-    return recursive->current_estimate;
+    gyro.x = gyro.raw_x * GYRO /* 2000 * (gyro._gx / 32768.0) */;
+    gyro.y = gyro.raw_y * GYRO /* 2000 * (gyro._gy / 32768.0) */;
+    gyro.z = gyro.raw_z * GYRO /* 2000 * (gyro._gz / 32768.0) */;
 }
 
 struct kalman_filter_t roll_kalman_Filter = {
@@ -136,4 +132,38 @@ void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, flo
 
     *angle_f = kf->angle;
     *angle_dot_f = kf->angle_dot;
+}
+
+void attitude_angle_update()
+{
+    /**
+     * Y:tan(pitch) = tan(Axz) = Rx/Rz
+     * X:tan(roll)  = tan(Ayz) = Ry/Rz
+     */
+    get_mpu_raw_data();
+
+    angle.roll = atan2(acc.y, acc.z) * 180.0 / 3.1415;
+    angle.pitch = -atan2(acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180.0 / 3.1415;
+    // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
+
+    kalman_filter(&roll_kalman_Filter, 
+        angle.roll, 
+        gyro.x, 
+        &angle.roll, 
+        &gyro.x
+    );
+    kalman_filter(&pitch_kalman_Filter, 
+        angle.pitch, 
+        gyro.y, 
+        &angle.pitch, 
+        &gyro.y
+    );
+#if 0
+    kalman_filter(&yaw_kalman_Filter, 
+        angle.yaw, 
+        gyro.z, 
+        &angle.yaw, 
+        &gyro.z
+    );
+#endif
 }

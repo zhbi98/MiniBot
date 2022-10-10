@@ -5,8 +5,10 @@
 TIM_HandleTypeDef Tim2Handle;
 TIM_HandleTypeDef Tim4Handle;
 
-__IO uint16_t tim2cnt = 0;
-__IO uint16_t tim4cnt = 0;
+__IO uint16_t TIM2_cnt      = 0;
+__IO uint16_t TIM4_cnt      = 0;
+__IO uint16_t TIM2_division = 0;
+__IO uint16_t TIM4_division = 0;
 
 static void lv8731v_gpio_init();
 static void lv8731v_R_timer_init();
@@ -172,20 +174,12 @@ static void lv8731v_L_timer_init()
     HAL_TIM_OC_Start_IT(&Tim4Handle, TIM_CHANNEL_4);
 }
 
-#define TIM_CLK    100000U // 100KHz
-#define PULSE_MINI 0U      // 150Hz
-#define PULSE_MAX  6000U   // 6000HZ
-#define PULSE_INCR 2U      // 2Hz
-
 void TIM2_IRQHandler(void)
 {
-    int target = (PULSE_MINI + PULSE_INCR * tim2cnt) * 2;
-    int division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target);
-
     if (__HAL_TIM_GET_FLAG(&Tim2Handle, TIM_IT_CC2) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim2Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim2Handle, TIM_CHANNEL_2, (count + division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim2Handle, TIM_CHANNEL_2, (count + TIM2_division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim2Handle, TIM_IT_CC2);
     }
@@ -193,13 +187,10 @@ void TIM2_IRQHandler(void)
 
 void TIM4_IRQHandler(void)
 {
-    int target = (PULSE_MINI + PULSE_INCR * tim4cnt) * 2;
-    int division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target);
-
     if (__HAL_TIM_GET_FLAG(&Tim4Handle, TIM_IT_CC4) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim4Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim4Handle, TIM_CHANNEL_4, (count + division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim4Handle, TIM_CHANNEL_4, (count + TIM4_division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim4Handle, TIM_IT_CC4);
     }
@@ -243,13 +234,22 @@ void lv8731v_init()
     lv8731v_L_timer_init();
 }
 
+#define TIM_CLK    100000U // 100KHz
+#define PULSE_MINI 0U      // 0Hz
+#define PULSE_MAX  6000U   // 6000HZ
+#define PULSE_INCR 2U      // 2Hz
+
 void lv8731_R_speed(int speed)
 {
     if (speed > (PULSE_MAX / PULSE_INCR))
         speed = (PULSE_MAX / PULSE_INCR);
     if (speed < 0)
         speed = 0;
-    tim2cnt = speed;
+
+    TIM2_cnt = speed;
+
+    int target = (PULSE_MINI + PULSE_INCR * TIM2_cnt);
+    TIM2_division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target / 2);
 }
 
 void lv8731_L_speed(int speed)
@@ -258,7 +258,11 @@ void lv8731_L_speed(int speed)
         speed = (PULSE_MAX / PULSE_INCR);
     if (speed < 0)
         speed = 0;
-    tim4cnt = speed;
+
+    TIM4_cnt = speed;
+
+    int target = (PULSE_MINI + PULSE_INCR * TIM4_cnt);
+    TIM4_division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target / 2);
 }
 
 void lv8731_R_dir(unsigned char dir)
@@ -277,9 +281,9 @@ void lv8731_L_dir(unsigned char dir)
 #include <stdio.h>
 
 #define TIM_CLK    100000U // 100KHz
-#define PULSE_MINI 150U    // 150Hz
+#define PULSE_MINI 100U    // 100Hz
 #define PULSE_MAX  6000U   // 6000HZ
-#define PULSE_INCR 58.5F   // (PULSE_MAX - PULSE_MINI) / 100
+#define PULSE_INCR 59.9F   // (PULSE_MAX - PULSE_MINI) / 100
 
 void timer_counter_value()
 {

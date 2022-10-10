@@ -7,18 +7,18 @@
  * MPU_Init();
  * while (mpu_dmp_init());
  * 
- * MPU_Get_Accelerometer(&aacx, &aacy, &aacz);
- * MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);
+ * MPU_Get_Accelerometer(&acc.raw_x, &acc.raw_y, &acc.raw_z);
+ * MPU_Get_Gyroscope(&gyro.raw_x, &gyro.raw_y, &gyro.raw_z);
  * temp = MPU_Get_Temperature();
  *
  * if (!mpu_dmp_get_data(&pitch, &roll, &yaw)) {
  *     send_sensor_data(
- *         aacx, aacy, aacz, 
- *         gyrox, gyroy, gyroz
+ *         acc.raw_x, acc.raw_y, acc.raw_z, 
+ *         gyro.raw_x, gyro.raw_y, gyro.raw_z
  *     );
  *     send_status_data(
- *         aacx, aacy, aacz,
- *         gyrox, gyroy, gyroz,
+ *         acc.raw_x, acc.raw_y, acc.raw_z,
+ *         gyro.raw_x, gyro.raw_y, gyro.raw_z,
  *         (int)(roll * 100),
  *         (int)(pitch * 100),
  *         (int)(yaw * 10)
@@ -55,7 +55,7 @@ void send_sensor_data(short aacx, short aacy, short aacz, short gyrox, short gyr
     buf[0]  = (aacx >> 8) & 0xFF;
     buf[1]  = aacx & 0xFF;
     buf[2]  = (aacy >> 8) & 0xFF;
-    buf[3]  = aacy & 0xff;
+    buf[3]  = aacy & 0xFF;
     buf[4]  = (aacz >> 8) & 0xFF;
     buf[5]  = aacz & 0xFF; 
     buf[6]  = (gyrox >> 8) & 0xFF;
@@ -65,7 +65,7 @@ void send_sensor_data(short aacx, short aacy, short aacz, short gyrox, short gyr
     buf[10] = (gyroz >> 8) & 0xFF;
     buf[11] = gyroz & 0xFF;
 
-    send_frames(0xa1, buf, 12);
+    send_frames(0xA1, buf, 12);
 }
 
 void send_status_data(short aacx, short aacy, short aacz, short gyrox, short gyroy, short gyroz, short roll, short pitch, short yaw)
@@ -74,46 +74,46 @@ void send_status_data(short aacx, short aacy, short aacz, short gyrox, short gyr
 
     memset(buf, 0, 28);
 
-    buf[0]  = (aacx >> 8) & 0xff;
-    buf[1]  = aacx & 0xff;
+    buf[0]  = (aacx >> 8) & 0xFF;
+    buf[1]  = aacx & 0xFF;
 
-    buf[2]  = (aacy >> 8) & 0xff;
-    buf[3]  = aacy & 0xff;
+    buf[2]  = (aacy >> 8) & 0xFF;
+    buf[3]  = aacy & 0xFF;
 
-    buf[4]  = (aacz >> 8) & 0xff;
-    buf[5]  = aacz & 0xff;
+    buf[4]  = (aacz >> 8) & 0xFF;
+    buf[5]  = aacz & 0xFF;
 
-    buf[6]  = (gyrox >> 8) & 0xff;
-    buf[7]  = gyrox & 0xff;
+    buf[6]  = (gyrox >> 8) & 0xFF;
+    buf[7]  = gyrox & 0xFF;
 
-    buf[8]  = (gyroy >> 8) & 0xff;
-    buf[9]  = gyroy & 0xff;
+    buf[8]  = (gyroy >> 8) & 0xFF;
+    buf[9]  = gyroy & 0xFF;
 
-    buf[10] = (gyroz >> 8) & 0xff;
-    buf[11] = gyroz & 0xff;
+    buf[10] = (gyroz >> 8) & 0xFF;
+    buf[11] = gyroz & 0xFF;
 
-    buf[18] = (roll >> 8) & 0xff;
-    buf[19] = roll & 0xff;
+    buf[18] = (roll >> 8) & 0xFF;
+    buf[19] = roll & 0xFF;
 
-    buf[20] = (pitch >> 8) & 0xff;
-    buf[21] = pitch & 0xff;
+    buf[20] = (pitch >> 8) & 0xFF;
+    buf[21] = pitch & 0xFF;
 
-    buf[22] = (yaw >> 8) & 0xff;
-    buf[23] = yaw & 0xff;
+    buf[22] = (yaw >> 8) & 0xFF;
+    buf[23] = yaw & 0xFF;
 
-    send_frames(0xaf, buf, 28);
+    send_frames(0xAF, buf, 28);
 }
 
 /**
  * Example:
  * 
  * ANO_DT_Send_Senser(
- *     accel._ax,
- *     accel._ay,
- *     accel._az,
- *     gyro._gx,
- *     gyro._gy,
- *     gyro._gz,
+ *     acc.raw_x,
+ *     acc.raw_y,
+ *     acc.raw_z,
+ *     gyro.raw_x,
+ *     gyro.raw_y,
+ *     gyro.raw_z,
  *     0,
  *     0,
  *     0,

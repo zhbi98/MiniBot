@@ -106,8 +106,6 @@ void usart_send_string(const unsigned char * string)
 
     while (string[i] != '\0')
         i++;
-    if (i <= 0)
-        return;
 
     while (HAL_UART_Transmit(&UartHandle, (unsigned char *)string, i, 0XFFFF) != HAL_OK);
 }

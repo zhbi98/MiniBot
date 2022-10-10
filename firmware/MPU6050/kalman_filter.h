@@ -2,38 +2,41 @@
 #ifndef __KALMAN_FILTER_H__
 #define __KALMAN_FILTER_H__
 
+#include <math.h>
 #include "MPU6050_I2C.h"
 #include "MPU6050.h"
 #include "time.h"
+#include "log.h"
 
-struct _accelerometer {
-    short raw_data_x;
-    short raw_data_y;
-    short raw_data_z;
+#define ACC  (2.0 / 32768.0) // Accelerometer full range 2g
+#define GYRO (2000.0 / 32768.0) // Gyro full range 2000 deg
+
+#define GYROX_BIAS 110
+#define GYROY_BIAS 3
+#define GYROZ_BIAS -5
+
+struct _acc {
+    short raw_x;
+    short raw_y;
+    short raw_z;
     float x;
     float y;
     float z;
 };
 
 struct _gyro {
-    short raw_data_x;
-    short raw_data_y;
-    short raw_data_z;
+    short raw_x;
+    short raw_y;
+    short raw_z;
     float x;
     float y;
     float z;
 };
 
-struct _angles {
+struct _angle {
     float pitch;
     float roll;
     float yaw;
-};
-
-struct _recursive {
-    float current_estimate;
-    float last_estimste;
-    float K_gain;
 };
 
 struct kalman_filter_t {
@@ -57,15 +60,17 @@ struct kalman_filter_t {
     float t_1;
 };
 
-extern struct _accelerometer accel;
+extern struct _acc acc;
 extern struct _gyro gyro;
-extern struct _angles angles;
+extern struct _angle angle;
 
 extern struct kalman_filter_t roll_kalman_Filter;
 extern struct kalman_filter_t pitch_kalman_Filter;
 extern struct kalman_filter_t yaw_kalman_Filter;
 
+extern void check_gyro_bias();
 extern void read_mpu_data();
 extern void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, float *angle_f, float *angle_dot_f);
+extern void attitude_angle_update();
 
 #endif

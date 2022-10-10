@@ -1,6 +1,6 @@
 
+#include <stdio.h>
 #include <string.h>
-#include <math.h>
 
 #include "stm32f1xx_hal.h"
 #include "time.h"
@@ -8,138 +8,47 @@
 #include "ftos.h"
 #include "retarget.h"
 
+#include "ano_tech.h"
 #include "MPU6050_I2C.h"
 #include "MPU6050.h"
 #include "kalman_filter.h"
-#include "ano_tech.h"
-#include "lv8731v.h"
 #include "task.h"
+#include "controller.h"
 
 void SystemClock_Config(void);
 void TIM3_init();
 
-unsigned int last_count = 0;
-unsigned int count = 0;
-unsigned int deltaT = 0;
-
-float Med_Angle=-1.00;      // 机械中值，能使得小车真正平衡住的角度 
-float Target_Speed=0;     // 期望速度。---二次开发接口，用于控制小车前进后退及其速度。
-
-int Vertical_out,Velocity_out,Turn_out; // 直立环&速度环&转向环的输出变量
-
-float 
-  Vertical_Kp=90,
-  Vertical_Kd=1.2;      // 直立环Kp、Kd
-
-uint32_t Task_01()
-{
-    /**
-     * Y:tan(pitch) = tan(Axz) = Rx/Rz
-     * X:tan(roll)  = tan(Ayz) = Ry/Rz
-     */
-    read_mpu_data();
-    angles.roll = atan2(accel.y, accel.z) * 180.0 / 3.14;
-    // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
-    angles.pitch = -atan2(accel.x, sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0 / 3.14;
-
-    deltaT = count - last_count;
-    last_count = count;
-    roll_kalman_Filter.dt  = deltaT * 10 / 1000.0;
-    pitch_kalman_Filter.dt = deltaT * 10 / 1000.0;
-    yaw_kalman_Filter.dt   = deltaT * 10 / 1000.0;
-
-    kalman_filter(&roll_kalman_Filter, angles.roll, gyro.x, &angles.roll, &gyro.x);
-    kalman_filter(&pitch_kalman_Filter, angles.pitch, gyro.y, &angles.pitch, &gyro.y);
-    kalman_filter(&yaw_kalman_Filter, angles.yaw, gyro.z, &angles.yaw, &gyro.z);
-    return 0;
-}
-
-int Vertical(float Med, float Angle, float gyro_Y) 
-{
-  int PWM_out;
-  
-  PWM_out = Vertical_Kp*(Angle-Med)+Vertical_Kd*(gyro_Y-0);
-  
-  return (int)PWM_out;
-} 
-
-uint32_t Task_02()
-{
-    int speed = Vertical(0,angles.roll,gyro.x);
-    
-    if (speed < 0) {
-        lv8731_L_dir(1); // Fall back
-        lv8731_R_dir(0); // Fall back
-        speed = abs(speed);
-    } else {
-        lv8731_L_dir(0); // Forward
-        lv8731_R_dir(1); // Forward
-        speed = abs(speed);
-    }
-
-    lv8731_R_speed(speed);
-    lv8731_L_speed(speed);
-    return 0;
-}
-
-uint32_t Task_03()
-{
-    printf("Task_03\n");
-    return 0;
-}
-
 int main()
 {
-    HAL_Init();
     SystemClock_Config();
+    HAL_Init();
     usart_init();
     RetargetInit(&UartHandle);
     TIM3_init();
     lv8731v_init();
     MPU_Init();
-
-    SCH_Add_Task(Task_01, 0, 1);
-    SCH_Add_Task(Task_02, 0, 1);
-    SCH_Add_Task(Task_03, 0, 100);
+#if 1
+    check_gyro_bias();
+#endif
 
     for (;;) {
+        attitude_angle_update();
+        int speed = PID_Angle(MEDIAN, angle.roll);
+        motor_output(speed, speed);
         /* Insert delay 100 ms */
         // HAL_Delay(100);
-        SCH_Dispatch_Tasks();
-#if 0
+
         send_sensor_data(
-            accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
-            gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z
+            acc.raw_x, acc.raw_y, acc.raw_z, 
+            gyro.raw_x, gyro.raw_y, gyro.raw_z
         );
         send_status_data(
-            accel.raw_data_x, accel.raw_data_y, accel.raw_data_z, 
-            gyro.raw_data_x, gyro.raw_data_y, gyro.raw_data_z, 
-            (int)(angles.roll * 100), 
-            (int)(angles.pitch * 100), 
-            (int)(angles.yaw * 10)
+            acc.raw_x, acc.raw_y, acc.raw_z,
+            gyro.raw_x, gyro.raw_y, gyro.raw_z,
+            (int)(angle.roll * 100),
+            (int)(angle.pitch * 100),
+            (int)(angle.yaw * 10)
         );
-#endif
-#if 0
-        ANO_DT_Send_Senser(
-            accel.raw_data_x,
-            accel.raw_data_y,
-            accel.raw_data_z,
-            gyro.raw_data_x,
-            gyro.raw_data_y,
-            gyro.raw_data_z,
-            0,
-            0,
-            0,
-            0
-        );
-        ANO_DT_Send_Status(
-            -angles.roll, 
-            angles.pitch, 
-            -angles.yaw, 
-            0, 
-            0, 
-            0);
-#endif
     }
     return 0;
 }
@@ -226,8 +135,7 @@ void TIM3_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &Tim3Handle) {
-        TIMX_IRQHandler_user();
-        count++;
+
     }
 }
 

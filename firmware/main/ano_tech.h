@@ -2,10 +2,9 @@
 #ifndef __ANO_TECH_H__
 #define __ANO_TECH_H__
 
-#include "stm32f1xx_hal.h"
-#include "ano_tech.h"
-#include "usart.h"
 #include <string.h>
+#include "stm32f1xx_hal.h"
+#include "usart.h"
 
 #define USART_SEND_DATA(data, len) while (HAL_UART_Transmit(&UartHandle, data, len, 0XFFFF) != HAL_OK)
 

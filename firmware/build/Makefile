@@ -128,6 +128,30 @@ MiniBot.elf/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/build
 .PHONY : MiniBot.elf/fast
 
+CONTROLLER/controller.obj: CONTROLLER/controller.c.obj
+.PHONY : CONTROLLER/controller.obj
+
+# target to build an object file
+CONTROLLER/controller.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/controller.c.obj
+.PHONY : CONTROLLER/controller.c.obj
+
+CONTROLLER/controller.i: CONTROLLER/controller.c.i
+.PHONY : CONTROLLER/controller.i
+
+# target to preprocess a source file
+CONTROLLER/controller.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/controller.c.i
+.PHONY : CONTROLLER/controller.c.i
+
+CONTROLLER/controller.s: CONTROLLER/controller.c.s
+.PHONY : CONTROLLER/controller.s
+
+# target to generate assembly for a file
+CONTROLLER/controller.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/controller.c.s
+.PHONY : CONTROLLER/controller.c.s
+
 LV8731V/lv8731v.obj: LV8731V/lv8731v.c.obj
 .PHONY : LV8731V/lv8731v.obj
 
@@ -1945,6 +1969,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... MiniBot.elf
+	@echo ... CONTROLLER/controller.obj
+	@echo ... CONTROLLER/controller.i
+	@echo ... CONTROLLER/controller.s
 	@echo ... LV8731V/lv8731v.obj
 	@echo ... LV8731V/lv8731v.i
 	@echo ... LV8731V/lv8731v.s

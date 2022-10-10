@@ -32,9 +32,12 @@
     } while (0)
 #endif
 
-#define error(fmt, ...) logger("ERROR: %s:%d %s(): " fmt ": %s", __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__, strerror(errno))
-#define warn(fmt, ...)  logger("WARN: %s:%d %s(): " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#define info(fmt, ...)  logger("INFO: %s:%d %s(): " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+// #define error(fmt, ...) logger("ERROR: %s:%d %s(): " fmt ": %s", __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__, strerror(errno))
+// #define warn(fmt, ...)  logger("WARN: %s:%d %s(): " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+// #define info(fmt, ...)  logger("INFO: %s:%d %s(): " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define error(fmt, ...) logger("ERROR: %s() %d: " fmt ": %s", __FUNCTION__, __LINE__, ##__VA_ARGS__, strerror(errno))
+#define warn(fmt, ...)  logger("WARN: %s() %d: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define info(fmt, ...)  logger("INFO: %s() %d: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define info_mem(p, l)  memdump(p, l);
 
 #ifdef DEBUG
