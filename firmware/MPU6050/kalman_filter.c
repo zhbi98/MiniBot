@@ -1,61 +1,84 @@
 
 #include "kalman_filter.h"
 
-struct _acc acc = {0};
-struct _gyro gyro = {0};
+struct _mpu_raw mpu_raw = {0};
+struct _mpu_data mpu_data = {0};
 struct _angle angle = {0};
 
-void check_gyro_bias()
+void mpu_sensor_check_gyro_bias(unsigned char check)
 {
+    short temp[3] = {0};
     int data[3] = {0};
+
+    if (!check) return;
 
     info("Place the gyroscope horizontally and still.");
 
-    for (unsigned char check = 0; check < 255; check++) {
-        MPU_Get_Gyroscope(&gyro.raw_x, &gyro.raw_y, &gyro.raw_z);
+    for (unsigned char read = 0; read < 255; read++) {
+        MPU_Get_Gyroscope(&temp[0], &temp[1], &temp[2]);
 
-        data[0] += gyro.raw_x;
-        data[1] += gyro.raw_y;
-        data[2] += gyro.raw_z;
+        data[0] += temp[0];
+        data[1] += temp[1];
+        data[2] += temp[2];
 
         sleep_ms(50);
     }
 
-    info("gyrox:%d", (int)(data[0] / 255 + 0.5));
-    info("gyroy:%d", (int)(data[1] / 255 + 0.5));
-    info("gyroz:%d", (int)(data[2] / 255 + 0.5));
+    temp[0] = (int)(data[0] / 255.0 + 0.5);
+    temp[1] = (int)(data[1] / 255.0 + 0.5);
+    temp[2] = (int)(data[2] / 255.0 + 0.5);
+
+    info("check success.");
 }
 
-void get_mpu_raw_data()
+void mpu_sensor_update_raw(struct _mpu_raw * raw)
 {
-    MPU_Get_Accelerometer(
-        &acc.raw_x,
-        &acc.raw_y,
-        &acc.raw_z
-    );
-    MPU_Get_Gyroscope(
-        &gyro.raw_x,
-        &gyro.raw_y,
-        &gyro.raw_z
-    );
+    short data[7] = {0};
 
-    MPU_Get_Temperature();
+    MPU_Get_Accelerometer(&data[0], &data[1], &data[2]);
+    MPU_Get_Gyroscope(&data[3], &data[4], &data[5]);
+    data[6] = MPU_Get_Temperature();
 
-    gyro.raw_x = gyro.raw_x - GYROX_BIAS;
-    gyro.raw_y = gyro.raw_y - GYROY_BIAS;
-    gyro.raw_z = gyro.raw_z - GYROZ_BIAS;
+    raw->accx  = data[0] - ACCX_BIAS;
+    raw->accy  = data[1] - ACCY_BIAS;
+    raw->accz  = data[2] - ACCZ_BIAS;
 
-    // Accelerometer full range 2g
-    acc.x = acc.raw_x * ACC /* 2 * (acc._ax / 32768.0) */;
-    acc.y = acc.raw_y * ACC /* 2 * (acc._ay / 32768.0) */;
-    acc.z = acc.raw_z * ACC /* 2 * (acc._az / 32768.0) */;
-    // Gyro full range 2000 deg
-    gyro.x = gyro.raw_x * GYRO /* 2000 * (gyro._gx / 32768.0) */;
-    gyro.y = gyro.raw_y * GYRO /* 2000 * (gyro._gy / 32768.0) */;
-    gyro.z = gyro.raw_z * GYRO /* 2000 * (gyro._gz / 32768.0) */;
+    raw->gyrox = data[3] - GYROX_BIAS;
+    raw->gyroy = data[4] - GYROY_BIAS;
+    raw->gyroz = data[5] - GYROZ_BIAS;
 }
 
-struct kalman_filter_t roll_kalman_Filter = {
+void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
+{
+    // Accelerometer full range 2g
+    data->accx = raw->accx * ACC /* 2 * (acc._ax / 32768.0) */;
+    data->accy = raw->accy * ACC /* 2 * (acc._ay / 32768.0) */;
+    data->accz = raw->accz * ACC /* 2 * (acc._az / 32768.0) */;
+    // Gyro full range 2000 deg
+    data->gyrox = raw->gyrox * GYRO /* 2000 * (gyro._gx / 32768.0) */;
+    data->gyroy = raw->gyroy * GYRO /* 2000 * (gyro._gy / 32768.0) */;
+    data->gyroz = raw->gyroz * GYRO /* 2000 * (gyro._gz / 32768.0) */;
+}
+
+void mpu_sensor_update_angle(struct _angle * angle)
+{
+    /**
+     * Y:tan(pitch) = tan(Axz) = Rx/Rz
+     * X:tan(roll)  = tan(Ayz) = Ry/Rz
+     */
+    angle->roll = atan2(
+        mpu_data.accy, 
+        mpu_data.accz
+    ) * 180.0 / PI;
+
+    angle->pitch = -atan2(
+        mpu_data.accx, 
+        sqrt(mpu_data.accy * mpu_data.accy + mpu_data.accz * mpu_data.accz)
+    ) * 180.0 / PI;
+    // pitch = atan2(accx, accz) * 180.0 / 3.14;
+}
+
+struct kalman_filter_t roll_kalman = {
     .dt      = 0.01,
     .P       = {
         {1, 0}, 
@@ -68,7 +91,7 @@ struct kalman_filter_t roll_kalman_Filter = {
     .C_0     = 1,
 };
 
-struct kalman_filter_t pitch_kalman_Filter = {
+struct kalman_filter_t pitch_kalman = {
     .dt      = 0.01,
     .P       = {
         {1, 0}, 
@@ -81,7 +104,7 @@ struct kalman_filter_t pitch_kalman_Filter = {
     .C_0     = 1,
 };
 
-struct kalman_filter_t yaw_kalman_Filter = {
+struct kalman_filter_t yaw_kalman = {
     .dt      = 0.01,
     .P       = {
         {1, 0}, 
@@ -134,36 +157,36 @@ void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, flo
     *angle_dot_f = kf->angle_dot;
 }
 
-void attitude_angle_update()
+void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * mpu_data)
 {
-    /**
-     * Y:tan(pitch) = tan(Axz) = Rx/Rz
-     * X:tan(roll)  = tan(Ayz) = Ry/Rz
-     */
-    get_mpu_raw_data();
+    static unsigned int last_tick = 0;
+    unsigned int tick_incr = 0;
 
-    angle.roll = atan2(acc.y, acc.z) * 180.0 / 3.1415;
-    angle.pitch = -atan2(acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * 180.0 / 3.1415;
-    // pitch = atan2(accel.ax, accel.az) * 180.0 / 3.14;
+    tick_incr = get_sys_tick() - last_tick;
+    last_tick = get_sys_tick();
 
-    kalman_filter(&roll_kalman_Filter, 
-        angle.roll, 
-        gyro.x, 
-        &angle.roll, 
-        &gyro.x
+    roll_kalman.dt = tick_incr * 10.0 / 1000.0;
+    pitch_kalman.dt = roll_kalman.dt;
+    yaw_kalman.dt = roll_kalman.dt;
+
+    kalman_filter(&roll_kalman, 
+        angle->roll, 
+        mpu_data->gyrox, 
+        &angle->roll, 
+        &mpu_data->gyrox
     );
-    kalman_filter(&pitch_kalman_Filter, 
-        angle.pitch, 
-        gyro.y, 
-        &angle.pitch, 
-        &gyro.y
+    kalman_filter(&pitch_kalman, 
+        angle->pitch, 
+        mpu_data->gyroy, 
+        &angle->pitch, 
+        &mpu_data->gyroy
     );
 #if 0
-    kalman_filter(&yaw_kalman_Filter, 
-        angle.yaw, 
-        gyro.z, 
-        &angle.yaw, 
-        &gyro.z
+    kalman_filter(&yaw_kalman, 
+        angle->yaw, 
+        mpu_data->gyroz, 
+        &angle->yaw, 
+        &mpu_data->gyroz
     );
 #endif
 }

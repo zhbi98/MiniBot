@@ -7,30 +7,51 @@
 #include "MPU6050.h"
 #include "time.h"
 #include "log.h"
+#include "controller.h"
+
+#define PI 3.1416f
 
 #define ACC  (2.0 / 32768.0) // Accelerometer full range 2g
 #define GYRO (2000.0 / 32768.0) // Gyro full range 2000 deg
 
+#if 1 /** MPU MODULE */
+#define ACCX_BIAS 0
+#define ACCY_BIAS 0
+#define ACCZ_BIAS 0
+
 #define GYROX_BIAS 110
 #define GYROY_BIAS 3
 #define GYROZ_BIAS -5
+#endif
 
-struct _acc {
-    short raw_x;
-    short raw_y;
-    short raw_z;
-    float x;
-    float y;
-    float z;
+#if 0 /** MINIBOT */
+#define ACCX_BIAS 0
+#define ACCY_BIAS 0
+#define ACCZ_BIAS 0
+
+#define GYROX_BIAS -8
+#define GYROY_BIAS -6
+#define GYROZ_BIAS -3
+#endif
+
+struct _mpu_raw {
+    short accx;
+    short accy;
+    short accz;
+
+    short gyrox;
+    short gyroy;
+    short gyroz;
 };
 
-struct _gyro {
-    short raw_x;
-    short raw_y;
-    short raw_z;
-    float x;
-    float y;
-    float z;
+struct _mpu_data {
+    float accx;
+    float accy;
+    float accz;
+
+    float gyrox;
+    float gyroy;
+    float gyroz;
 };
 
 struct _angle {
@@ -60,17 +81,20 @@ struct kalman_filter_t {
     float t_1;
 };
 
-extern struct _acc acc;
-extern struct _gyro gyro;
+extern struct _mpu_raw mpu_raw;
+extern struct _mpu_data mpu_data;
 extern struct _angle angle;
 
-extern struct kalman_filter_t roll_kalman_Filter;
-extern struct kalman_filter_t pitch_kalman_Filter;
-extern struct kalman_filter_t yaw_kalman_Filter;
+extern struct kalman_filter_t roll_kalman;
+extern struct kalman_filter_t pitch_kalman;
+extern struct kalman_filter_t yaw_kalman;
 
-extern void check_gyro_bias();
-extern void read_mpu_data();
 extern void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, float *angle_f, float *angle_dot_f);
-extern void attitude_angle_update();
+
+extern void mpu_sensor_check_gyro_bias(unsigned char check);
+extern void mpu_sensor_update_raw(struct _mpu_raw * raw);
+extern void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data);
+extern void mpu_sensor_update_angle(struct _angle * angle);
+extern void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * mpu_data);
 
 #endif

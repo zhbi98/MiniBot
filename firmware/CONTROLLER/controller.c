@@ -6,6 +6,8 @@ struct _pid_angle pid_angle = {
     .kd = 1.9,
 };
 
+unsigned int sys_tick_cnt = 0;
+
 int PID_Angle(float target, float angle)
 {
     float out;
@@ -19,7 +21,7 @@ int PID_Speed()
 
 }
 
-void motor_output(int L_speed, int R_speed)
+void motor_driver(int L_speed, int R_speed)
 {
     // speed < 0 : Fall back
     // speed > 0 : Forward
@@ -32,4 +34,9 @@ void motor_output(int L_speed, int R_speed)
 
     lv8731_R_speed(R_speed);
     lv8731_L_speed(L_speed);
+}
+
+unsigned int get_sys_tick()
+{
+    return sys_tick_cnt;
 }

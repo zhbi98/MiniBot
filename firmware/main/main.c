@@ -27,24 +27,27 @@ int main()
     TIM3_init();
     lv8731v_init();
     MPU_Init();
-#if 1
-    check_gyro_bias();
-#endif
+    mpu_sensor_check_gyro_bias(true);
 
     for (;;) {
-        attitude_angle_update();
-        int speed = PID_Angle(MEDIAN, angle.roll);
-        motor_output(speed, speed);
         /* Insert delay 100 ms */
         // HAL_Delay(100);
 
+        mpu_sensor_update_raw(&mpu_raw);
+        mpu_sensor_update_data(&mpu_raw, &mpu_data);
+        mpu_sensor_update_angle(&angle);
+        mpu_sensor_update_attitude_angle(&angle, &mpu_data);
+
+        int speed = PID_Angle(MEDIAN, angle.roll);
+        motor_driver(speed, speed);
+
         send_sensor_data(
-            acc.raw_x, acc.raw_y, acc.raw_z, 
-            gyro.raw_x, gyro.raw_y, gyro.raw_z
+            mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
+            mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
         );
         send_status_data(
-            acc.raw_x, acc.raw_y, acc.raw_z,
-            gyro.raw_x, gyro.raw_y, gyro.raw_z,
+            mpu_raw.accx, mpu_raw.accy, mpu_raw.accz,
+            mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz,
             (int)(angle.roll * 100),
             (int)(angle.pitch * 100),
             (int)(angle.yaw * 10)
@@ -135,7 +138,7 @@ void TIM3_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &Tim3Handle) {
-
+        sys_tick_cnt++;
     }
 }
 

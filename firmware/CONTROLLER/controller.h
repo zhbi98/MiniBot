@@ -12,8 +12,12 @@ struct _pid_angle {
     float kd;
 };
 
+extern unsigned int sys_tick_cnt;
+
 extern int PID_Angle(float target, float angle);
 extern int PID_Speed();
-extern void motor_output(int L_speed, int R_speed);
+extern void motor_driver(int L_speed, int R_speed);
+
+extern unsigned int get_sys_tick();
 
 #endif

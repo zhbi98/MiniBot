@@ -235,34 +235,22 @@ void lv8731v_init()
 }
 
 #define TIM_CLK    100000U // 100KHz
-#define PULSE_MINI 0U      // 0Hz
 #define PULSE_MAX  6000U   // 6000HZ
-#define PULSE_INCR 2U      // 2Hz
 
-void lv8731_R_speed(int speed)
+void lv8731_R_speed(unsigned int speed)
 {
-    if (speed > (PULSE_MAX / PULSE_INCR))
-        speed = (PULSE_MAX / PULSE_INCR);
-    if (speed < 0)
-        speed = 0;
+    if (speed > PULSE_MAX)
+        speed = PULSE_MAX;
 
-    TIM2_cnt = speed;
-
-    int target = (PULSE_MINI + PULSE_INCR * TIM2_cnt);
-    TIM2_division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target / 2);
+    TIM2_division = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
 }
 
-void lv8731_L_speed(int speed)
+void lv8731_L_speed(unsigned int speed)
 {
-    if (speed > (PULSE_MAX / PULSE_INCR))
-        speed = (PULSE_MAX / PULSE_INCR);
-    if (speed < 0)
-        speed = 0;
+    if (speed > PULSE_MAX)
+        speed = PULSE_MAX;
 
-    TIM4_cnt = speed;
-
-    int target = (PULSE_MINI + PULSE_INCR * TIM4_cnt);
-    TIM4_division = target == 0 ? 0xFFFF : (int)(TIM_CLK / target / 2);
+    TIM4_division = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
 }
 
 void lv8731_R_dir(unsigned char dir)
@@ -292,6 +280,7 @@ void timer_counter_value()
     printf("const short cnt_list[100] = {\n\t");
 
     for (unsigned int i = 0; i < 100; i++) {
+        // target_speed = PULSE_MINI + PULSE_INCR * i
         printf("%-3d, ", (int)(TIM_CLK / (PULSE_MINI + PULSE_INCR * i) / 2));
         j++;
         if (j == 5) {
