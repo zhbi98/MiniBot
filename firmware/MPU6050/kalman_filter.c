@@ -1,6 +1,19 @@
 
 #include "kalman_filter.h"
 
+struct _recursive ax_recursive = {.K_gain = 0.05};
+struct _recursive ay_recursive = {.K_gain = 0.05};
+struct _recursive az_recursive = {.K_gain = 0.05};
+
+float recursive_processing(struct _recursive * recursive, float Y_meas)
+{
+    recursive->current_estimate = recursive->last_estimste + recursive->K_gain * (Y_meas - recursive->last_estimste);
+
+    recursive->last_estimste = recursive->current_estimate;
+
+    return recursive->current_estimate;
+}
+
 struct _mpu_raw mpu_raw = {0};
 struct _mpu_data mpu_data = {0};
 struct _angle angle = {0};
@@ -58,22 +71,26 @@ void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
     data->gyrox = raw->gyrox * GYRO_SCALE /* 2000 * (gyro._gx / 32768.0) */;
     data->gyroy = raw->gyroy * GYRO_SCALE /* 2000 * (gyro._gy / 32768.0) */;
     data->gyroz = raw->gyroz * GYRO_SCALE /* 2000 * (gyro._gz / 32768.0) */;
+
+    data->accx  = recursive_processing(&ax_recursive, data->accx);
+    data->accy  = recursive_processing(&ay_recursive, data->accy);
+    data->accz  = recursive_processing(&az_recursive, data->accz);
 }
 
-void mpu_sensor_update_angle(struct _angle * angle)
+void mpu_sensor_update_angle(struct _mpu_data * data, struct _angle * angle)
 {
     /**
      * Y:tan(pitch) = tan(Axz) = Rx/Rz
      * X:tan(roll)  = tan(Ayz) = Ry/Rz
      */
     angle->roll = atan2(
-        mpu_data.accy, 
-        mpu_data.accz
+        data->accy, 
+        data->accz
     ) * 180.0 / PI;
 
     angle->pitch = -atan2(
-        mpu_data.accx, 
-        sqrt(mpu_data.accy * mpu_data.accy + mpu_data.accz * mpu_data.accz)
+        data->accx, 
+        sqrt(data->accy * data->accy + data->accz * data->accz)
     ) * 180.0 / PI;
     // pitch = atan2(accx, accz) * 180.0 / 3.14;
 }
@@ -162,10 +179,10 @@ void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * 
     static unsigned int last_tick = 0;
     unsigned int tick_incr = 0;
 
-    tick_incr = get_sys_tick() - last_tick;
-    last_tick = get_sys_tick();
+    tick_incr = GET_SYS_TICK() - last_tick;
+    last_tick = GET_SYS_TICK();
 
-    roll_kalman.dt = tick_incr * 10.0 / 1000.0;
+    roll_kalman.dt = tick_incr * 5.0 / 1000.0;
     pitch_kalman.dt = roll_kalman.dt;
     yaw_kalman.dt = roll_kalman.dt;
 

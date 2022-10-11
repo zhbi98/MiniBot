@@ -18,6 +18,40 @@
 void SystemClock_Config(void);
 void TIM3_init();
 
+uint32_t mpu_update_task()
+{
+    mpu_sensor_update_raw(&mpu_raw);
+    mpu_sensor_update_data(&mpu_raw, &mpu_data);
+    mpu_sensor_update_angle(&mpu_data, &angle);
+    mpu_sensor_update_attitude_angle(&angle, &mpu_data);
+}
+
+uint32_t motor_update_task()
+{
+    int speed = angle_controller(MEDIAN, angle.roll, mpu_data.gyrox);
+    motor_update_speed(speed, speed);
+}
+
+uint32_t usart_update_task()
+{
+    info("MiniBot UPdate");
+}
+
+uint32_t anotech_update_task()
+{
+    send_sensor_data(
+        mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
+        mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
+    );
+    send_status_data(
+        mpu_raw.accx, mpu_raw.accy, mpu_raw.accz,
+        mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz,
+        (int)(angle.roll * 100),
+        (int)(angle.pitch * 100),
+        (int)(angle.yaw * 10)
+    );
+}
+
 int main()
 {
     SystemClock_Config();
@@ -27,31 +61,17 @@ int main()
     TIM3_init();
     lv8731v_init();
     MPU_Init();
-    mpu_sensor_check_gyro_bias(true);
+    mpu_sensor_check_gyro_bias(false);
+
+    SCH_Add_Task(mpu_update_task,     1,  1);
+    SCH_Add_Task(motor_update_task,   1,  1);
+    SCH_Add_Task(usart_update_task,   40, 40);
+    SCH_Add_Task(anotech_update_task, 2,  2);
 
     for (;;) {
         /* Insert delay 100 ms */
         // HAL_Delay(100);
-
-        mpu_sensor_update_raw(&mpu_raw);
-        mpu_sensor_update_data(&mpu_raw, &mpu_data);
-        mpu_sensor_update_angle(&angle);
-        mpu_sensor_update_attitude_angle(&angle, &mpu_data);
-
-        int speed = PID_Angle(MEDIAN, angle.roll);
-        motor_driver(speed, speed);
-
-        send_sensor_data(
-            mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
-            mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
-        );
-        send_status_data(
-            mpu_raw.accx, mpu_raw.accy, mpu_raw.accz,
-            mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz,
-            (int)(angle.roll * 100),
-            (int)(angle.pitch * 100),
-            (int)(angle.yaw * 10)
-        );
+        SCH_Dispatch_Tasks();
     }
     return 0;
 }
@@ -125,7 +145,7 @@ void TIM3_init()
     Tim3Handle.Instance               = TIM3;
     Tim3Handle.Init.Prescaler         = 7200 - 1;
     Tim3Handle.Init.CounterMode       = TIM_COUNTERMODE_UP;
-    Tim3Handle.Init.Period            = 100;
+    Tim3Handle.Init.Period            = 50;
     Tim3Handle.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
     Tim3Handle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     if (HAL_TIM_Base_Init(&Tim3Handle) != HAL_OK) {
@@ -138,7 +158,8 @@ void TIM3_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &Tim3Handle) {
-        sys_tick_cnt++;
+        SYS_INC_TICK();
+        TIMX_IRQHandler_user();
     }
 }
 

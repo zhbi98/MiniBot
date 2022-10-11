@@ -14,7 +14,7 @@
 #define ACC_SCALE  (2.0 / 32768.0) // Accelerometer full range 2g
 #define GYRO_SCALE (2000.0 / 32768.0) // Gyro full range 2000 deg
 
-#if 1 /** MPU MODULE */
+#if 0 /** MPU MODULE */
 #define ACCX_BIAS 0
 #define ACCY_BIAS 0
 #define ACCZ_BIAS 0
@@ -24,7 +24,7 @@
 #define GYROZ_BIAS -5
 #endif
 
-#if 0 /** MINIBOT */
+#if 1 /** MINIBOT */
 #define ACCX_BIAS 0
 #define ACCY_BIAS 0
 #define ACCZ_BIAS 0
@@ -81,6 +81,12 @@ struct kalman_filter_t {
     float t_1;
 };
 
+struct _recursive {
+    float current_estimate;
+    float last_estimste;
+    float K_gain;
+};
+
 extern struct _mpu_raw mpu_raw;
 extern struct _mpu_data mpu_data;
 extern struct _angle angle;
@@ -94,7 +100,7 @@ extern void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro
 extern void mpu_sensor_check_gyro_bias(unsigned char check);
 extern void mpu_sensor_update_raw(struct _mpu_raw * raw);
 extern void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data);
-extern void mpu_sensor_update_angle(struct _angle * angle);
+extern void mpu_sensor_update_angle(struct _mpu_data * data, struct _angle * angle);
 extern void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * mpu_data);
 
 #endif

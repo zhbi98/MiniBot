@@ -5,10 +5,8 @@
 TIM_HandleTypeDef Tim2Handle;
 TIM_HandleTypeDef Tim4Handle;
 
-__IO uint16_t TIM2_cnt      = 0;
-__IO uint16_t TIM4_cnt      = 0;
-__IO uint16_t TIM2_division = 0;
-__IO uint16_t TIM4_division = 0;
+__IO uint16_t TIM2_cnt = 0;
+__IO uint16_t TIM4_cnt = 0;
 
 static void lv8731v_gpio_init();
 static void lv8731v_R_timer_init();
@@ -179,7 +177,7 @@ void TIM2_IRQHandler(void)
     if (__HAL_TIM_GET_FLAG(&Tim2Handle, TIM_IT_CC2) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim2Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim2Handle, TIM_CHANNEL_2, (count + TIM2_division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim2Handle, TIM_CHANNEL_2, (count + TIM2_cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim2Handle, TIM_IT_CC2);
     }
@@ -190,7 +188,7 @@ void TIM4_IRQHandler(void)
     if (__HAL_TIM_GET_FLAG(&Tim4Handle, TIM_IT_CC4) != RESET) {
         __IO uint16_t count = 0; // 因为捕获比较寄存器的值是 16 位的设置的值不能超过 65535 如果超过那么会自动减 65535(溢出)
         count = __HAL_TIM_GetCounter(&Tim4Handle); // 获取捕获比较寄存器的值
-        __HAL_TIM_SET_COMPARE(&Tim4Handle, TIM_CHANNEL_4, (count + TIM4_division) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
+        __HAL_TIM_SET_COMPARE(&Tim4Handle, TIM_CHANNEL_4, (count + TIM4_cnt) % 0xFFFF); // 重新设置捕获比较寄存器的值, %0xFFFF 防止溢出
 
         __HAL_TIM_CLEAR_IT(&Tim4Handle, TIM_IT_CC4);
     }
@@ -242,7 +240,7 @@ void lv8731_R_speed(unsigned int speed)
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM2_division = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
+    TIM2_cnt = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
 }
 
 void lv8731_L_speed(unsigned int speed)
@@ -250,7 +248,7 @@ void lv8731_L_speed(unsigned int speed)
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM4_division = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
+    TIM4_cnt = (speed == 0) ? 50000 : (int)(TIM_CLK / speed / 2);
 }
 
 void lv8731_R_dir(unsigned char dir)
