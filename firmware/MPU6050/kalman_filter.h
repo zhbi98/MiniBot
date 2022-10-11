@@ -11,8 +11,8 @@
 
 #define PI 3.1416f
 
-#define ACC  (2.0 / 32768.0) // Accelerometer full range 2g
-#define GYRO (2000.0 / 32768.0) // Gyro full range 2000 deg
+#define ACC_SCALE  (2.0 / 32768.0) // Accelerometer full range 2g
+#define GYRO_SCALE (2000.0 / 32768.0) // Gyro full range 2000 deg
 
 #if 1 /** MPU MODULE */
 #define ACCX_BIAS 0
