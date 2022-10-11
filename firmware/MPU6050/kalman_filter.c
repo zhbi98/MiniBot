@@ -51,13 +51,13 @@ void mpu_sensor_update_raw(struct _mpu_raw * raw)
 void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
 {
     // Accelerometer full range 2g
-    data->accx = raw->accx * ACC /* 2 * (acc._ax / 32768.0) */;
-    data->accy = raw->accy * ACC /* 2 * (acc._ay / 32768.0) */;
-    data->accz = raw->accz * ACC /* 2 * (acc._az / 32768.0) */;
+    data->accx = raw->accx * ACC_SCALE /* 2 * (acc._ax / 32768.0) */;
+    data->accy = raw->accy * ACC_SCALE /* 2 * (acc._ay / 32768.0) */;
+    data->accz = raw->accz * ACC_SCALE /* 2 * (acc._az / 32768.0) */;
     // Gyro full range 2000 deg
-    data->gyrox = raw->gyrox * GYRO /* 2000 * (gyro._gx / 32768.0) */;
-    data->gyroy = raw->gyroy * GYRO /* 2000 * (gyro._gy / 32768.0) */;
-    data->gyroz = raw->gyroz * GYRO /* 2000 * (gyro._gz / 32768.0) */;
+    data->gyrox = raw->gyrox * GYRO_SCALE /* 2000 * (gyro._gx / 32768.0) */;
+    data->gyroy = raw->gyroy * GYRO_SCALE /* 2000 * (gyro._gy / 32768.0) */;
+    data->gyroz = raw->gyroz * GYRO_SCALE /* 2000 * (gyro._gz / 32768.0) */;
 }
 
 void mpu_sensor_update_angle(struct _angle * angle)
