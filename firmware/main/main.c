@@ -23,22 +23,23 @@ uint32_t mpu_update_task()
     mpu_sensor_update_raw(&mpu_raw);
     mpu_sensor_update_data(&mpu_raw, &mpu_data);
     mpu_sensor_update_angle(&mpu_data, &angle);
-    mpu_sensor_update_attitude_angle(&angle, &mpu_data);
+    mpu_sensor_update_attitude_angle(&mpu_data, &angle);
 }
 
 uint32_t motor_update_task()
 {
-    int speed = angle_controller(MEDIAN, angle.roll, mpu_data.gyrox);
+    int speed = balance_angle_control(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
     motor_update_speed(speed, speed);
 }
 
 uint32_t usart_update_task()
 {
-    info("MiniBot UPdate");
+    info("MiniBot Angle:%s", double_string(angle.roll, 2));
 }
 
 uint32_t anotech_update_task()
 {
+#if 0
     send_sensor_data(
         mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
         mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
@@ -50,6 +51,7 @@ uint32_t anotech_update_task()
         (int)(angle.pitch * 100),
         (int)(angle.yaw * 10)
     );
+#endif
 }
 
 int main()

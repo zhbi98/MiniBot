@@ -101,6 +101,6 @@ extern void mpu_sensor_check_gyro_bias(unsigned char check);
 extern void mpu_sensor_update_raw(struct _mpu_raw * raw);
 extern void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data);
 extern void mpu_sensor_update_angle(struct _mpu_data * data, struct _angle * angle);
-extern void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * mpu_data);
+extern void mpu_sensor_update_attitude_angle(struct _mpu_data * mpu_data, struct _angle * angle);
 
 #endif

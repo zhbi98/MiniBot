@@ -1,9 +1,9 @@
 
 #include "kalman_filter.h"
 
-struct _recursive ax_recursive = {.K_gain = 0.05};
-struct _recursive ay_recursive = {.K_gain = 0.05};
-struct _recursive az_recursive = {.K_gain = 0.05};
+struct _recursive ax_recursive = {.K_gain = 0.2};
+struct _recursive ay_recursive = {.K_gain = 0.2};
+struct _recursive az_recursive = {.K_gain = 0.2};
 
 float recursive_processing(struct _recursive * recursive, float Y_meas)
 {
@@ -174,7 +174,7 @@ void kalman_filter(struct kalman_filter_t * kf, float angle_m, float gyro_m, flo
     *angle_dot_f = kf->angle_dot;
 }
 
-void mpu_sensor_update_attitude_angle(struct _angle * angle, struct _mpu_data * mpu_data)
+void mpu_sensor_update_attitude_angle(struct _mpu_data * mpu_data, struct _angle * angle)
 {
     static unsigned int last_tick = 0;
     unsigned int tick_incr = 0;

@@ -3,26 +3,42 @@
 
 unsigned int sys_tick_cnt = 0;
 
-const struct _angle_pid angle_pid = {
-    .kp = 300.0,
-    .kd = 5.0,
+struct _angle_pid angle_pid = {
+    .kp = -650.0,
+    .kd = 12.0,
 };
 
-const struct _speed_pid speed_pid = {
+struct _speed_pid speed_pid = {
     .kp = 00.0,
     .ki = 0.1,
 };
 
-int angle_controller(float Med, float Angle, float gyro_Y)
+int balance_angle_control(float target_angle, float angle, float gyrox)
 {
-  int PWM_out;
-  
-  PWM_out = angle_pid.kp * (Angle - Med) + angle_pid.kd * (gyro_Y - 0);
-  
-  return (int)PWM_out;
+    static unsigned int last_tick = 0;
+    unsigned int tick = 0;
+    static float last_angle = 0.0;
+    float pulse = 0.0;
+
+    tick = GET_SYS_TICK() - last_tick;
+    last_tick = GET_SYS_TICK();
+    angle_pid.deltaT = tick * 5.0 / 1000.0;
+    if (angle_pid.deltaT < 0.005)
+        angle_pid.deltaT = 0.005;
+
+    angle_pid.current_err = target_angle - angle;
+    pulse = angle_pid.kp * angle_pid.current_err + angle_pid.kd * gyrox /*(angle - last_angle) / angle_pid.deltaT*/;
+
+    // info("Gyrox1:%s", double_string(gyrox, 2));
+    // info("Gyrox2:%s", double_string((angle - last_angle) / angle_pid.deltaT, 2));
+
+    last_angle = angle;
+    angle_pid.last_err = angle_pid.current_err;
+
+    return (int)pulse;
 }
 
-int speed_controller()
+int balance_speed_control()
 {
 
 }
