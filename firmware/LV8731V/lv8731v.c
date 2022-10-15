@@ -233,14 +233,14 @@ void lv8731v_init()
 }
 
 #define TIM_CLK    100000U // 100KHz
-#define PULSE_MAX  6000U   // 6000HZ
+#define PULSE_MAX  13000U  // 13KHZ
 
 void lv8731_R_speed(unsigned int speed)
 {
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM2_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2);
+    TIM2_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2.0 + 0.5);
 }
 
 void lv8731_L_speed(unsigned int speed)
@@ -248,7 +248,7 @@ void lv8731_L_speed(unsigned int speed)
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM4_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2);
+    TIM4_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2.0 + 0.5);
 }
 
 void lv8731_R_dir(unsigned char dir)
