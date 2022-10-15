@@ -15,24 +15,59 @@
 #include "task.h"
 #include "controller.h"
 
+#define FILTER_COUNT  16
+
 void SystemClock_Config(void);
 void TIM3_init();
+
+short ax_buf[FILTER_COUNT]; 
+short ay_buf[FILTER_COUNT];
+short az_buf[FILTER_COUNT];
+
+void acc_filter(struct _mpu_raw * raw)
+{
+    unsigned char i;
+    int ax_sum = 0, ay_sum = 0, az_sum = 0; 
+
+    for(i = 1 ; i < FILTER_COUNT; i++) {
+        ax_buf[i - 1] = ax_buf[i];
+        ay_buf[i - 1] = ay_buf[i];
+        az_buf[i - 1] = az_buf[i];
+    }
+
+    ax_buf[FILTER_COUNT - 1] = raw->accx;
+    ay_buf[FILTER_COUNT - 1] = raw->accy;
+    az_buf[FILTER_COUNT - 1] = raw->accz;
+
+    for(i = 0 ; i < FILTER_COUNT; i++) {
+        ax_sum += ax_buf[i];
+        ay_sum += ay_buf[i];
+        az_sum += az_buf[i];
+    }
+
+    raw->accx = (short)(ax_sum / FILTER_COUNT);
+    raw->accy = (short)(ay_sum / FILTER_COUNT);
+    raw->accz = (short)(az_sum / FILTER_COUNT);
+}
 
 uint32_t mpu_update_task()
 {
     mpu_sensor_update_raw(&mpu_raw);
+    acc_filter(&mpu_raw);
     mpu_sensor_update_data(&mpu_raw, &mpu_data);
     mpu_sensor_update_angle(&mpu_data, &angle);
     mpu_sensor_update_attitude_angle(&mpu_data, &angle);
 }
 
-uint32_t motor_update_task()
+uint32_t angle_control_task()
 {
-    int speed = balance_angle_control(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
-    motor_update_speed(speed, speed);
+    int vertical_out = 0;
+
+    vertical_out = vertical(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
+    motor_update(vertical_out, vertical_out);
 }
 
-uint32_t usart_update_task()
+uint32_t speed_control_task()
 {
     info("MiniBot Angle:%s", double_string(angle.roll, 2));
 }
@@ -65,10 +100,10 @@ int main()
     MPU_Init();
     mpu_sensor_check_gyro_bias(false);
 
-    SCH_Add_Task(mpu_update_task,     1,  1);
-    SCH_Add_Task(motor_update_task,   1,  1);
-    SCH_Add_Task(usart_update_task,   40, 40);
-    SCH_Add_Task(anotech_update_task, 2,  2);
+    SCH_Add_Task(mpu_update_task,     1, 1);
+    SCH_Add_Task(angle_control_task,  1, 1);
+    SCH_Add_Task(speed_control_task,  40, 40);
+    SCH_Add_Task(anotech_update_task, 2, 2);
 
     for (;;) {
         /* Insert delay 100 ms */
@@ -169,3 +204,11 @@ void TIM3_IRQHandler(void)
 {
     HAL_TIM_IRQHandler(&Tim3Handle);
 }
+
+// https://blog.csdn.net/peng_258/article/details/78166587
+// https://mp.weixin.qq.com/s/GzPMkNsb5Lr_-tG2k7rc9g
+// https://songyibiao.gitbook.io/design-self-balancing-robot/ruan-jian-kai-fa-pian/e03
+// https://zhuanlan.zhihu.com/p/206522126
+// https://c.miaowlabs.com/E03.html
+// https://bbs.huaweicloud.com/blogs/333346
+// https://www.guyuehome.com/34381

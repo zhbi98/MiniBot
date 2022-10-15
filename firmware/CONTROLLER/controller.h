@@ -8,30 +8,20 @@
 #include "ftos.h"
 #include "kalman_filter.h"
 
-#define BALANCE_ANGLE 0.67f
+#define BALANCE_ANGLE 0.0f/*0.67f*/
+#define FILTER_COUNT 20
+#define SPEED_SCALE 53.33f
 
-struct _angle_pid {
-    float kp;
-    float kd;
-    float last_err;
-    float current_err;
-    float deltaT;
-};
-
-struct _speed_pid {
-    float kp;
-    float ki;
-    float last_err;
-    float current_err;
-    float deltaT;
-};
-
-extern int balance_angle_control(float target_angle, float angle, float gyrox);
-extern int balance_speed_control();
-extern void motor_update_speed(int L_speed, int R_speed);
+#define ANGLE_KP 720.0f
+#define ANGLE_KD 0.0f
 
 extern  unsigned int   sys_tick_cnt;
 #define SYS_INC_TICK() sys_tick_cnt++
 #define GET_SYS_TICK() sys_tick_cnt
+
+extern float speed_buf[];
+
+extern void motor_update(short left_speed, short right_speed);
+extern int vertical(float med, float angle, float gyro_y);
 
 #endif

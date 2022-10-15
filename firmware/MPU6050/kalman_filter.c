@@ -71,10 +71,11 @@ void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
     data->gyrox = raw->gyrox * GYRO_SCALE /* 2000 * (gyro._gx / 32768.0) */;
     data->gyroy = raw->gyroy * GYRO_SCALE /* 2000 * (gyro._gy / 32768.0) */;
     data->gyroz = raw->gyroz * GYRO_SCALE /* 2000 * (gyro._gz / 32768.0) */;
-
+#if 0
     data->accx  = recursive_processing(&ax_recursive, data->accx);
     data->accy  = recursive_processing(&ay_recursive, data->accy);
     data->accz  = recursive_processing(&az_recursive, data->accz);
+#endif
 }
 
 void mpu_sensor_update_angle(struct _mpu_data * data, struct _angle * angle)
