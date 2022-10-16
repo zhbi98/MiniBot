@@ -15,7 +15,7 @@
 #include "task.h"
 #include "controller.h"
 
-#define FILTER_COUNT  16
+#define FILTER_COUNT 16
 
 void SystemClock_Config(void);
 void TIM3_init();
@@ -59,15 +59,31 @@ uint32_t mpu_update_task()
     mpu_sensor_update_attitude_angle(&mpu_data, &angle);
 }
 
-uint32_t angle_control_task()
+uint32_t balance_control_task()
 {
     int vertical_out = 0;
+    int velocity_out = 0;
 
     vertical_out = vertical(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
-    motor_update(vertical_out, vertical_out);
+    velocity_out = velocity(motor_speed.left_speed, motor_speed.right_speed);
+
+    motor_speed.left_speed = vertical_out + velocity_out;
+    motor_speed.right_speed = vertical_out + velocity_out;
+
+    if (motor_speed.left_speed  >  SPEED_MAX)
+        motor_speed.left_speed  =  SPEED_MAX;
+    if (motor_speed.left_speed  < -SPEED_MAX)
+        motor_speed.left_speed  = -SPEED_MAX;
+
+    if (motor_speed.right_speed >  SPEED_MAX)
+        motor_speed.right_speed =  SPEED_MAX;
+    if (motor_speed.right_speed < -SPEED_MAX)
+        motor_speed.right_speed = -SPEED_MAX;
+
+    motor_update(motor_speed.left_speed, motor_speed.right_speed);
 }
 
-uint32_t speed_control_task()
+uint32_t bluetooth_control_task()
 {
     info("MiniBot Angle:%s", double_string(angle.roll, 2));
 }
@@ -100,9 +116,9 @@ int main()
     MPU_Init();
     mpu_sensor_check_gyro_bias(false);
 
-    SCH_Add_Task(mpu_update_task,     1, 1);
-    SCH_Add_Task(angle_control_task,  1, 1);
-    SCH_Add_Task(speed_control_task,  40, 40);
+    SCH_Add_Task(mpu_update_task, 1, 1);
+    SCH_Add_Task(balance_control_task, 1, 1);
+    SCH_Add_Task(bluetooth_control_task, 40, 40);
     SCH_Add_Task(anotech_update_task, 2, 2);
 
     for (;;) {

@@ -4,6 +4,7 @@
 unsigned int sys_tick_cnt = 0;
 
 float speed_buf[FILTER_COUNT];
+struct _speed motor_speed;
 
 float average_filter(int left_speed, int right_speed)
 {
@@ -12,7 +13,7 @@ float average_filter(int left_speed, int right_speed)
     for (unsigned int i = 1; i < FILTER_COUNT; i++)
         speed_buf[i - 1] = speed_buf[i];
 
-    speed_buf[FILTER_COUNT - 1] = (left_speed + right_speed) / 2.0 / SPEED_SCALE;
+    speed_buf[FILTER_COUNT - 1] = (left_speed + right_speed) / 2.0 / 53.333;
 
     for (unsigned int i = 0 ; i < FILTER_COUNT; i++)
         speed_sum += speed_buf[i];
@@ -45,3 +46,25 @@ int vertical(float med, float angle, float gyro_y)
 
     return pwm_out;
 } 
+
+int velocity(int left_speed, int right_speed)
+{  
+    static float speed = 0.0;
+    static float speed_out = 0.0;
+    static float speed_sum = 0.0;
+
+    speed_out = average_filter(left_speed, right_speed);
+
+    speed *= 0.7;
+    speed += speed_out * 0.3;
+    speed_sum += speed;
+
+    if (speed_sum >  13000.0)
+        speed_sum =  13000.0;
+    if (speed_sum < -13000.0)
+        speed_sum = -13000.0;
+
+    int velocity = (speed - 0) * SPEED_KP + speed_sum * SPEED_KI;
+
+    return velocity;
+}
