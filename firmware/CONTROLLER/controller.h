@@ -12,7 +12,7 @@
 #define FILTER_COUNT 20
 #define SPEED_SCALE 53.33f
 
-#define ANGLE_KP 720.0f
+#define ANGLE_KP 300.0f
 #define ANGLE_KD 0.0f
 
 extern  unsigned int   sys_tick_cnt;

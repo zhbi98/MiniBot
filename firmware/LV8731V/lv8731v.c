@@ -104,7 +104,7 @@ static void lv8731v_R_timer_init()
     TIM_OC_InitTypeDef sConfigOC = {0};
 
     Tim2Handle.Instance = TIM2;
-    Tim2Handle.Init.Prescaler = 720 - 1;
+    Tim2Handle.Init.Prescaler = 30/*720*/ - 1;
     Tim2Handle.Init.CounterMode = TIM_COUNTERMODE_UP;
     Tim2Handle.Init.Period = 0xFFFF;
     Tim2Handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -146,7 +146,7 @@ static void lv8731v_L_timer_init()
     TIM_OC_InitTypeDef sConfigOC = {0};
 
     Tim4Handle.Instance = TIM4;
-    Tim4Handle.Init.Prescaler = 720 - 1;
+    Tim4Handle.Init.Prescaler = 30/*720*/ - 1;
     Tim4Handle.Init.CounterMode = TIM_COUNTERMODE_UP;
     Tim4Handle.Init.Period = 0xFFFF;
     Tim4Handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -232,15 +232,15 @@ void lv8731v_init()
     lv8731v_L_timer_init();
 }
 
-#define TIM_CLK    100000U // 100KHz
-#define PULSE_MAX  13000U  // 13KHZ
+#define TIM_CLK    2400000U // 2.4MHz
+#define PULSE_MAX  5500U    // 5500 * 2.4Hz = 13.2KHZ
 
 void lv8731_R_speed(unsigned int speed)
 {
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM2_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2.0 + 0.5);
+    TIM2_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(1000000U / speed / 2.0);
 }
 
 void lv8731_L_speed(unsigned int speed)
@@ -248,7 +248,7 @@ void lv8731_L_speed(unsigned int speed)
     if (speed > PULSE_MAX)
         speed = PULSE_MAX;
 
-    TIM4_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(TIM_CLK / speed / 2.0 + 0.5);
+    TIM4_cnt = (speed == 0) ? (int)(TIM_CLK / 2) : (int)(1000000U / speed / 2.0);
 }
 
 void lv8731_R_dir(unsigned char dir)
