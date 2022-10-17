@@ -235,6 +235,13 @@ void lv8731v_init()
 #define TIM_CLK    2400000U // 2.4MHz
 #define PULSE_MAX  5500U    // 5500 * 2.4Hz = 13.2KHZ
 
+/**
+ * Stepper motor speed regulation needs uniform regulation, 
+ * This means that the control frequency changes need to be uniform, 
+ * For example, each change is 2Hz/2.4Hz/3Hz/5Hz and so on.
+ * Otherwise the motor response is too slow(motor response speed is abnormal).
+ */
+
 void lv8731_R_speed(unsigned int speed)
 {
     if (speed > PULSE_MAX)
