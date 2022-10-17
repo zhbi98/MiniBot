@@ -128,6 +128,30 @@ MiniBot.elf/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/build
 .PHONY : MiniBot.elf/fast
 
+CONTROLLER/bluetooth.obj: CONTROLLER/bluetooth.c.obj
+.PHONY : CONTROLLER/bluetooth.obj
+
+# target to build an object file
+CONTROLLER/bluetooth.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/bluetooth.c.obj
+.PHONY : CONTROLLER/bluetooth.c.obj
+
+CONTROLLER/bluetooth.i: CONTROLLER/bluetooth.c.i
+.PHONY : CONTROLLER/bluetooth.i
+
+# target to preprocess a source file
+CONTROLLER/bluetooth.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/bluetooth.c.i
+.PHONY : CONTROLLER/bluetooth.c.i
+
+CONTROLLER/bluetooth.s: CONTROLLER/bluetooth.c.s
+.PHONY : CONTROLLER/bluetooth.s
+
+# target to generate assembly for a file
+CONTROLLER/bluetooth.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/CONTROLLER/bluetooth.c.s
+.PHONY : CONTROLLER/bluetooth.c.s
+
 CONTROLLER/controller.obj: CONTROLLER/controller.c.obj
 .PHONY : CONTROLLER/controller.obj
 
@@ -1969,6 +1993,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... MiniBot.elf
+	@echo ... CONTROLLER/bluetooth.obj
+	@echo ... CONTROLLER/bluetooth.i
+	@echo ... CONTROLLER/bluetooth.s
 	@echo ... CONTROLLER/controller.obj
 	@echo ... CONTROLLER/controller.i
 	@echo ... CONTROLLER/controller.s

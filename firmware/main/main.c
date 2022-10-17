@@ -14,40 +14,41 @@
 #include "kalman_filter.h"
 #include "task.h"
 #include "controller.h"
+#include "bluetooth.h"
 
-#define FILTER_COUNT 16
+#define ACC_FILTER_COUNT 16
 
 void SystemClock_Config(void);
 void TIM3_init();
 
-short ax_buf[FILTER_COUNT]; 
-short ay_buf[FILTER_COUNT];
-short az_buf[FILTER_COUNT];
+short ax_buf[ACC_FILTER_COUNT]; 
+short ay_buf[ACC_FILTER_COUNT];
+short az_buf[ACC_FILTER_COUNT];
 
 void acc_filter(struct _mpu_raw * raw)
 {
     unsigned char i;
     int ax_sum = 0, ay_sum = 0, az_sum = 0; 
 
-    for(i = 1 ; i < FILTER_COUNT; i++) {
+    for(i = 1 ; i < ACC_FILTER_COUNT; i++) {
         ax_buf[i - 1] = ax_buf[i];
         ay_buf[i - 1] = ay_buf[i];
         az_buf[i - 1] = az_buf[i];
     }
 
-    ax_buf[FILTER_COUNT - 1] = raw->accx;
-    ay_buf[FILTER_COUNT - 1] = raw->accy;
-    az_buf[FILTER_COUNT - 1] = raw->accz;
+    ax_buf[ACC_FILTER_COUNT - 1] = raw->accx;
+    ay_buf[ACC_FILTER_COUNT - 1] = raw->accy;
+    az_buf[ACC_FILTER_COUNT - 1] = raw->accz;
 
-    for(i = 0 ; i < FILTER_COUNT; i++) {
+    for(i = 0 ; i < ACC_FILTER_COUNT; i++) {
         ax_sum += ax_buf[i];
         ay_sum += ay_buf[i];
         az_sum += az_buf[i];
     }
 
-    raw->accx = (short)(ax_sum / FILTER_COUNT);
-    raw->accy = (short)(ay_sum / FILTER_COUNT);
-    raw->accz = (short)(az_sum / FILTER_COUNT);
+    raw->accx = (short)(ax_sum / ACC_FILTER_COUNT);
+    raw->accy = (short)(ay_sum / ACC_FILTER_COUNT);
+    raw->accz = (short)(az_sum / ACC_FILTER_COUNT);
 }
 
 uint32_t mpu_update_task()
@@ -63,12 +64,14 @@ uint32_t balance_control_task()
 {
     int vertical_out = 0;
     int velocity_out = 0;
+    int turn_out = 0;
 
     vertical_out = vertical(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
     velocity_out = velocity(motor_speed.left_speed, motor_speed.right_speed);
+    // turn_out = turn(motor_speed.left_speed, motor_speed.right_speed, mpu_data.gyroz);
 
-    motor_speed.left_speed = vertical_out + velocity_out;
-    motor_speed.right_speed = vertical_out + velocity_out;
+    motor_speed.left_speed = vertical_out + velocity_out + 200;
+    motor_speed.right_speed = vertical_out + velocity_out - 200;
 
     if (motor_speed.left_speed  >  SPEED_MAX)
         motor_speed.left_speed  =  SPEED_MAX;
@@ -114,6 +117,7 @@ int main()
     TIM3_init();
     lv8731v_init();
     MPU_Init();
+    ble_init();
     mpu_sensor_check_gyro_bias(false);
 
     SCH_Add_Task(mpu_update_task, 1, 1);

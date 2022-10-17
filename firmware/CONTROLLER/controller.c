@@ -3,22 +3,22 @@
 
 unsigned int sys_tick_cnt = 0;
 
-float speed_buf[FILTER_COUNT];
+float speed_buf[SPEED_FILTER_COUNT];
 struct _speed motor_speed;
 
 float average_filter(int left_speed, int right_speed)
 {
     double speed_sum = 0;
 
-    for (unsigned int i = 1; i < FILTER_COUNT; i++)
+    for (unsigned int i = 1; i < SPEED_FILTER_COUNT; i++)
         speed_buf[i - 1] = speed_buf[i];
 
-    speed_buf[FILTER_COUNT - 1] = (left_speed + right_speed) / 2.0 / 53.333;
+    speed_buf[SPEED_FILTER_COUNT - 1] = (left_speed + right_speed) / 2.0 / 53.333;
 
-    for (unsigned int i = 0 ; i < FILTER_COUNT; i++)
+    for (unsigned int i = 0 ; i < SPEED_FILTER_COUNT; i++)
         speed_sum += speed_buf[i];
 
-    return speed_sum / FILTER_COUNT;
+    return speed_sum / SPEED_FILTER_COUNT;
 }
 
 void motor_update(short left_speed, short right_speed)
@@ -40,11 +40,11 @@ void motor_update(short left_speed, short right_speed)
 
 int vertical(float med, float angle, float gyro_y)
 {
-    int pwm_out;
+    int vertical;
 
-    pwm_out = ANGLE_KP * (angle - med) + ANGLE_KD * (gyro_y - 0);
+    vertical = ANGLE_KP * (angle - med) + ANGLE_KD * (gyro_y - 0);
 
-    return pwm_out;
+    return vertical;
 } 
 
 int velocity(int left_speed, int right_speed)
@@ -67,4 +67,13 @@ int velocity(int left_speed, int right_speed)
     int velocity = (speed - 0) * SPEED_KP + speed_sum * SPEED_KI;
 
     return velocity;
+}
+
+int turn(int left_speed, int right_speed, float gyro_y)
+{
+    int turn;
+
+    turn = (gyro_y - 0) * TURN_KP;
+
+    return turn;
 }

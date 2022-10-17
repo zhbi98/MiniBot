@@ -9,7 +9,7 @@
 #include "kalman_filter.h"
 
 #define BALANCE_ANGLE 0.55f
-#define FILTER_COUNT 20
+#define SPEED_FILTER_COUNT 20
 #define SPEED_SCALE 53.33f
 
 #define ANGLE_KP 300.0f
@@ -17,6 +17,8 @@
 
 #define SPEED_KP 40.0f
 #define SPEED_KI (SPEED_KP / 200.0)
+
+#define TURN_KP 40.0f
 
 #define SPEED_MAX 5500
 
@@ -36,5 +38,6 @@ extern float average_filter(int left_speed, int right_speed);
 extern void motor_update(short left_speed, short right_speed);
 extern int vertical(float med, float angle, float gyro_y);
 extern int velocity(int left_speed, int right_speed);
+extern int turn(int left_speed, int right_speed, float gyro_y);
 
 #endif
