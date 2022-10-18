@@ -78,10 +78,11 @@ void USART2_IRQHandler(void)
 
         BLE_aRxBuffer[BLE_Revcnt] = BLE_RevByte;
         BLE_Revcnt++;
-        if (Revcnt >= 32)
+        if (BLE_Revcnt >= 32)
         {
             BLE_Revcnt = 0;
         }
+        BLE_receive(BLE_RevByte);
     }
 }
 
@@ -115,6 +116,53 @@ static void Error_Handler()
     {
         /* Error if LED2 is slowly blinking (1 sec. period) */
     }
+}
+
+void BLE_receive(unsigned char ble_data)
+{
+#if (BLE_APP == 0)
+    switch (ble_data) {
+    case 'f': // forward
+        info("turn forward");
+        break;
+    case 'b': // back
+        info("turn back");
+        break;
+    case 'l': // left
+        info("turn left");
+        break;
+    case 'r': // right
+        info("turn right");
+        break;
+    case 's': // stop
+        info("turn stop");
+        break;
+    default:  // stop
+        info("turn stop");
+        break;
+    }
+#elif (BLE_APP == 1)
+    switch (ble_data) {
+    case 0x00: // stop
+        info("turn stop");
+        break;
+    case 0x01: // forward
+        info("turn forward");
+        break;
+    case 0x05: // back
+        info("turn back");
+        break;
+    case 0x07: // left
+        info("turn left");
+        break;
+    case 0x03: // right
+        info("turn right");
+        break;
+    default:   // stop
+        info("turn stop");
+        break;
+    }
+#endif
 }
 
 /**

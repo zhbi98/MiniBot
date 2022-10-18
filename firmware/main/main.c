@@ -88,7 +88,7 @@ uint32_t balance_control_task()
 
 uint32_t bluetooth_control_task()
 {
-    info("MiniBot Angle:%s", double_string(angle.roll, 2));
+    // info("MiniBot Angle:%s", double_string(angle.roll, 2));
 }
 
 uint32_t anotech_update_task()
@@ -224,11 +224,3 @@ void TIM3_IRQHandler(void)
 {
     HAL_TIM_IRQHandler(&Tim3Handle);
 }
-
-// https://blog.csdn.net/peng_258/article/details/78166587
-// https://mp.weixin.qq.com/s/GzPMkNsb5Lr_-tG2k7rc9g
-// https://songyibiao.gitbook.io/design-self-balancing-robot/ruan-jian-kai-fa-pian/e03
-// https://zhuanlan.zhihu.com/p/206522126
-// https://c.miaowlabs.com/E03.html
-// https://bbs.huaweicloud.com/blogs/333346
-// https://www.guyuehome.com/34381
