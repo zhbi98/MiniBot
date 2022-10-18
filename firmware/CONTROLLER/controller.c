@@ -64,7 +64,7 @@ int velocity(int left_speed, int right_speed)
     if (speed_sum < -13000.0)
         speed_sum = -13000.0;
 
-    int velocity = (speed - 0) * SPEED_KP + speed_sum * SPEED_KI;
+    int velocity = (speed - ble_speed.FB) * SPEED_KP + speed_sum * SPEED_KI;
 
     return velocity;
 }

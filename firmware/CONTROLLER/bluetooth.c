@@ -6,6 +6,8 @@ unsigned char BLE_RevByte;
 unsigned char BLE_Revcnt = 0;
 unsigned char BLE_aRxBuffer[32];
 
+struct _ble_speed ble_speed;
+
 void ble_usart_init()
 {
     BLE_UartHandle.Instance        = USART2;
@@ -145,18 +147,28 @@ void BLE_receive(unsigned char ble_data)
     switch (ble_data) {
     case 0x00: // stop
         info("turn stop");
+        ble_speed.FB = 0;
+        ble_speed.LR = 0;
         break;
     case 0x01: // forward
         info("turn forward");
+        ble_speed.FB = 50;
+        ble_speed.LR = 0;
         break;
     case 0x05: // back
         info("turn back");
+        ble_speed.FB = -50;
+        ble_speed.LR = 0;
         break;
     case 0x07: // left
         info("turn left");
+        ble_speed.FB = 0;
+        ble_speed.LR = -500;
         break;
     case 0x03: // right
         info("turn right");
+        ble_speed.FB = 0;
+        ble_speed.LR = 500;
         break;
     default:   // stop
         info("turn stop");

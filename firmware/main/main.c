@@ -68,10 +68,10 @@ uint32_t balance_control_task()
 
     vertical_out = vertical(BALANCE_ANGLE, angle.roll, mpu_data.gyrox);
     velocity_out = velocity(motor_speed.left_speed, motor_speed.right_speed);
-    // turn_out = turn(motor_speed.left_speed, motor_speed.right_speed, mpu_data.gyroz);
+    turn_out = turn(motor_speed.left_speed, motor_speed.right_speed, mpu_data.gyroz);
 
-    motor_speed.left_speed = vertical_out + velocity_out + 200;
-    motor_speed.right_speed = vertical_out + velocity_out - 200;
+    motor_speed.left_speed = vertical_out + velocity_out + turn_out + ble_speed.LR;
+    motor_speed.right_speed = vertical_out + velocity_out - turn_out - ble_speed.LR;
 
     if (motor_speed.left_speed  >  SPEED_MAX)
         motor_speed.left_speed  =  SPEED_MAX;

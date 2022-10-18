@@ -7,6 +7,7 @@
 #include "log.h"
 #include "ftos.h"
 #include "kalman_filter.h"
+#include "bluetooth.h"
 
 #define BALANCE_ANGLE 0.55f
 #define SPEED_FILTER_COUNT 20
@@ -15,10 +16,10 @@
 #define ANGLE_KP 300.0f
 #define ANGLE_KD 0.0f
 
-#define SPEED_KP 40.0f
+#define SPEED_KP 20.0f
 #define SPEED_KI (SPEED_KP / 200.0)
 
-#define TURN_KP 40.0f
+#define TURN_KP 10.0f
 
 #define SPEED_MAX 5500
 

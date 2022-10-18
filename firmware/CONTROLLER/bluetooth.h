@@ -9,7 +9,13 @@
 
 #define BLE_APP 1
 
+struct _ble_speed {
+	int FB;
+	int LR;
+};
+
 extern UART_HandleTypeDef BLE_UartHandle;
+extern struct _ble_speed ble_speed;
 
 extern void ble_usart_init();
 extern void ble_usart_gpio_init();
