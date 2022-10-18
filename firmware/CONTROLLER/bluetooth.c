@@ -24,7 +24,8 @@ void ble_usart_init()
     {
         Error_Handler();
     }
-    HAL_UART_Receive_IT(&BLE_UartHandle, &BLE_RevByte, 1);
+    // HAL_UART_Receive_IT(&BLE_UartHandle, &BLE_RevByte, 1);
+    __HAL_UART_ENABLE_IT(&BLE_UartHandle, UART_IT_RXNE);
 }
 
 void ble_usart_gpio_init()
@@ -71,19 +72,17 @@ void ble_init()
 
 void USART2_IRQHandler(void)
 {
-    if (__HAL_UART_GET_FLAG(&BLE_UartHandle, USART_FLAG_RXNE) != RESET) {
-        __HAL_UART_CLEAR_FLAG(&BLE_UartHandle, USART_FLAG_RXNE);
+    if (__HAL_UART_GET_FLAG(&BLE_UartHandle, UART_FLAG_RXNE) != RESET) {
+        
+        HAL_UART_Receive(&BLE_UartHandle, &BLE_RevByte, 1, 1000);
 
         BLE_aRxBuffer[BLE_Revcnt] = BLE_RevByte;
         BLE_Revcnt++;
-        if (BLE_Revcnt >= 32)
+        if (Revcnt >= 32)
         {
             BLE_Revcnt = 0;
         }
     }
-
-    // HAL_UART_IRQHandler(&BLE_UartHandle);
-    // HAL_UART_Receive_IT(&BLE_UartHandle, &BLE_RevByte, 1); // Restart USART interrupts
 }
 
 void ble_usart_send_string(const unsigned char * string)
@@ -120,6 +119,7 @@ static void Error_Handler()
 
 /**
  * STM32 HAL USART Refer
+ * https://www.cnblogs.com/UnfriendlyARM/p/10321838.html
  * https://www.cnblogs.com/wt88/p/9624115.html
  * https://zhuanlan.zhihu.com/p/346217940
  */
