@@ -248,29 +248,29 @@ MPU6050/MPU6050_I2C.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/MPU6050_I2C.c.s
 .PHONY : MPU6050/MPU6050_I2C.c.s
 
-MPU6050/kalman_filter.obj: MPU6050/kalman_filter.c.obj
-.PHONY : MPU6050/kalman_filter.obj
+MPU6050/kalman.obj: MPU6050/kalman.c.obj
+.PHONY : MPU6050/kalman.obj
 
 # target to build an object file
-MPU6050/kalman_filter.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.obj
-.PHONY : MPU6050/kalman_filter.c.obj
+MPU6050/kalman.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman.c.obj
+.PHONY : MPU6050/kalman.c.obj
 
-MPU6050/kalman_filter.i: MPU6050/kalman_filter.c.i
-.PHONY : MPU6050/kalman_filter.i
+MPU6050/kalman.i: MPU6050/kalman.c.i
+.PHONY : MPU6050/kalman.i
 
 # target to preprocess a source file
-MPU6050/kalman_filter.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.i
-.PHONY : MPU6050/kalman_filter.c.i
+MPU6050/kalman.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman.c.i
+.PHONY : MPU6050/kalman.c.i
 
-MPU6050/kalman_filter.s: MPU6050/kalman_filter.c.s
-.PHONY : MPU6050/kalman_filter.s
+MPU6050/kalman.s: MPU6050/kalman.c.s
+.PHONY : MPU6050/kalman.s
 
 # target to generate assembly for a file
-MPU6050/kalman_filter.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman_filter.c.s
-.PHONY : MPU6050/kalman_filter.c.s
+MPU6050/kalman.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MiniBot.elf.dir\build.make CMakeFiles/MiniBot.elf.dir/MPU6050/kalman.c.s
+.PHONY : MPU6050/kalman.c.s
 
 drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj: drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s.obj
 .PHONY : drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
@@ -2008,9 +2008,9 @@ help:
 	@echo ... MPU6050/MPU6050_I2C.obj
 	@echo ... MPU6050/MPU6050_I2C.i
 	@echo ... MPU6050/MPU6050_I2C.s
-	@echo ... MPU6050/kalman_filter.obj
-	@echo ... MPU6050/kalman_filter.i
-	@echo ... MPU6050/kalman_filter.s
+	@echo ... MPU6050/kalman.obj
+	@echo ... MPU6050/kalman.i
+	@echo ... MPU6050/kalman.s
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.obj
 	@echo ... drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.i

@@ -13,7 +13,10 @@ float speed_average_filter(int left_speed, int right_speed)
     for (unsigned int i = 1; i < SPEED_FILTER_COUNT; i++)
         speed_buf[i - 1] = speed_buf[i];
 
-    speed_buf[SPEED_FILTER_COUNT - 1] = (left_speed + right_speed) / 2.0 / 53.333;
+    speed_buf[SPEED_FILTER_COUNT - 1] = PLUSE_TO_RPM(
+                                    (left_speed + right_speed) * 2.4 / 2.0, 
+                                    1.8, 
+                                    16);
 
     for (unsigned int i = 0 ; i < SPEED_FILTER_COUNT; i++)
         speed_sum += speed_buf[i];

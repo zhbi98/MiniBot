@@ -1,5 +1,5 @@
 
-#include "kalman_filter.h"
+#include "kalman.h"
 
 struct _mpu_raw mpu_raw = {0};
 struct _mpu_data mpu_data = {0};
@@ -55,9 +55,6 @@ void mpu_sensor_data_filter(struct _mpu_data * data)
     data->accx  = _data.accx  * 0.7 + data->accx  * 0.3;
     data->accy  = _data.accy  * 0.7 + data->accy  * 0.3;
     data->accz  = _data.accz  * 0.7 + data->accz  * 0.3;
-    data->gyrox = _data.gyrox * 0.7 + data->gyrox * 0.3;
-    data->gyroy = _data.gyroy * 0.7 + data->gyroy * 0.3;
-    data->gyroz = _data.gyroz * 0.7 + data->gyroz * 0.3;
 
     _data = *data;
 }

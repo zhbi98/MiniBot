@@ -231,4 +231,3 @@ unsigned char MPU_Read_Byte(unsigned char reg)
     mpu6050_i2c_stop(); // IIC_Stop();         //产生一个停止条件
     return res;
 }
-       

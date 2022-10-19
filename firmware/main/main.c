@@ -11,50 +11,17 @@
 #include "ano_tech.h"
 #include "MPU6050_I2C.h"
 #include "MPU6050.h"
-#include "kalman_filter.h"
+#include "kalman.h"
 #include "task.h"
 #include "controller.h"
 #include "bluetooth.h"
 
-#define ACC_FILTER_COUNT 16
-
 void SystemClock_Config(void);
 void TIM3_init();
-
-short ax_buf[ACC_FILTER_COUNT]; 
-short ay_buf[ACC_FILTER_COUNT];
-short az_buf[ACC_FILTER_COUNT];
-
-void mpu_acc_raw_filter(struct _mpu_raw * raw)
-{
-    unsigned char i;
-    int ax_sum = 0, ay_sum = 0, az_sum = 0; 
-
-    for(i = 1 ; i < ACC_FILTER_COUNT; i++) {
-        ax_buf[i - 1] = ax_buf[i];
-        ay_buf[i - 1] = ay_buf[i];
-        az_buf[i - 1] = az_buf[i];
-    }
-
-    ax_buf[ACC_FILTER_COUNT - 1] = raw->accx;
-    ay_buf[ACC_FILTER_COUNT - 1] = raw->accy;
-    az_buf[ACC_FILTER_COUNT - 1] = raw->accz;
-
-    for(i = 0 ; i < ACC_FILTER_COUNT; i++) {
-        ax_sum += ax_buf[i];
-        ay_sum += ay_buf[i];
-        az_sum += az_buf[i];
-    }
-
-    raw->accx = (short)(ax_sum / ACC_FILTER_COUNT);
-    raw->accy = (short)(ay_sum / ACC_FILTER_COUNT);
-    raw->accz = (short)(az_sum / ACC_FILTER_COUNT);
-}
 
 uint32_t mpu_update_task()
 {
     mpu_sensor_update_raw(&mpu_raw);
-    mpu_acc_raw_filter(&mpu_raw);
     mpu_sensor_update_data(&mpu_raw, &mpu_data);
     mpu_sensor_update_angle(&mpu_data, &angle);
     mpu_sensor_update_attitude_angle(&mpu_data, &angle);
@@ -86,14 +53,17 @@ uint32_t balance_control_task()
     motor_update(motor_speed.left_speed, motor_speed.right_speed);
 }
 
-uint32_t bluetooth_control_task()
+uint32_t minibot_info_task()
 {
-    // info("MiniBot Angle:%s", double_string(angle.roll, 2));
+#if 0
+    info("MiniBot Angle:%s", double_string(angle.roll, 2));
+    info("MiniBot Speed (RPM):%s", double_string(PLUSE_TO_RPM(motor_speed.left_speed, 1.8, 16), 2));
+#endif
 }
 
 uint32_t anotech_update_task()
 {
-#if 1
+#if 0
     send_sensor_data(
         mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
         mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
@@ -103,7 +73,7 @@ uint32_t anotech_update_task()
         mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz,
         (int)(angle.roll * 100),
         (int)(angle.pitch * 100),
-        (int)(0.0/*angle.yaw*/ * 10)
+        (int)(angle.yaw * 10)
     );
 #endif
 }
@@ -122,7 +92,7 @@ int main()
 
     SCH_Add_Task(mpu_update_task, 1, 1);
     SCH_Add_Task(balance_control_task, 1, 1);
-    SCH_Add_Task(bluetooth_control_task, 40, 40);
+    SCH_Add_Task(minibot_info_task, 40, 40);
     SCH_Add_Task(anotech_update_task, 2, 2);
 
     for (;;) {
