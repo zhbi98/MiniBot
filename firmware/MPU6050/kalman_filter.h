@@ -81,12 +81,6 @@ struct kalman_filter_t {
     float t_1;
 };
 
-struct _recursive {
-    float current_estimate;
-    float last_estimste;
-    float K_gain;
-};
-
 extern struct _mpu_raw mpu_raw;
 extern struct _mpu_data mpu_data;
 extern struct _angle angle;

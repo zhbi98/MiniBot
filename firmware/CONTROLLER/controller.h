@@ -16,7 +16,7 @@
 #define ANGLE_KP 300.0f
 #define ANGLE_KD 0.0f
 
-#define SPEED_KP 20.0f
+#define SPEED_KP 40.0f
 #define SPEED_KI (SPEED_KP / 200.0)
 
 #define TURN_KP 10.0f
@@ -35,7 +35,7 @@ struct _speed {
 extern float speed_buf[];
 extern struct _speed motor_speed;
 
-extern float average_filter(int left_speed, int right_speed);
+extern float speed_average_filter(int left_speed, int right_speed);
 extern void motor_update(short left_speed, short right_speed);
 extern int vertical(float med, float angle, float gyro_y);
 extern int velocity(int left_speed, int right_speed);

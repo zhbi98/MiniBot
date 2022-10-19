@@ -6,7 +6,7 @@ unsigned int sys_tick_cnt = 0;
 float speed_buf[SPEED_FILTER_COUNT];
 struct _speed motor_speed;
 
-float average_filter(int left_speed, int right_speed)
+float speed_average_filter(int left_speed, int right_speed)
 {
     double speed_sum = 0;
 
@@ -53,18 +53,16 @@ int velocity(int left_speed, int right_speed)
     static float speed_out = 0.0;
     static float speed_sum = 0.0;
 
-    speed_out = average_filter(left_speed, right_speed);
+    speed_out = speed_average_filter(left_speed, right_speed);
 
     speed *= 0.7;
     speed += speed_out * 0.3;
     speed_sum += speed;
 
-    if (speed_sum >  13000.0)
-        speed_sum =  13000.0;
-    if (speed_sum < -13000.0)
-        speed_sum = -13000.0;
+    speed_sum = (speed_sum >  6000.0) ?  6000.0 : speed_sum;
+    speed_sum = (speed_sum < -6000.0) ? -6000.0 : speed_sum;
 
-    int velocity = (speed - ble_speed.FB) * SPEED_KP + speed_sum * SPEED_KI;
+    int velocity = (speed - 0) * SPEED_KP + speed_sum * SPEED_KI;
 
     return velocity;
 }

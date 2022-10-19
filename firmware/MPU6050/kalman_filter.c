@@ -1,19 +1,6 @@
 
 #include "kalman_filter.h"
 
-struct _recursive ax_recursive = {.K_gain = 0.2};
-struct _recursive ay_recursive = {.K_gain = 0.2};
-struct _recursive az_recursive = {.K_gain = 0.2};
-
-float recursive_processing(struct _recursive * recursive, float Y_meas)
-{
-    recursive->current_estimate = recursive->last_estimste + recursive->K_gain * (Y_meas - recursive->last_estimste);
-
-    recursive->last_estimste = recursive->current_estimate;
-
-    return recursive->current_estimate;
-}
-
 struct _mpu_raw mpu_raw = {0};
 struct _mpu_data mpu_data = {0};
 struct _angle angle = {0};
@@ -61,6 +48,20 @@ void mpu_sensor_update_raw(struct _mpu_raw * raw)
     raw->gyroz = data[5] - GYROZ_BIAS;
 }
 
+void mpu_sensor_data_filter(struct _mpu_data * data)
+{
+    static struct _mpu_data _data = {0};
+
+    data->accx  = _data.accx  * 0.7 + data->accx  * 0.3;
+    data->accy  = _data.accy  * 0.7 + data->accy  * 0.3;
+    data->accz  = _data.accz  * 0.7 + data->accz  * 0.3;
+    data->gyrox = _data.gyrox * 0.7 + data->gyrox * 0.3;
+    data->gyroy = _data.gyroy * 0.7 + data->gyroy * 0.3;
+    data->gyroz = _data.gyroz * 0.7 + data->gyroz * 0.3;
+
+    _data = *data;
+}
+
 void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
 {
     // Accelerometer full range 2g
@@ -71,11 +72,8 @@ void mpu_sensor_update_data(struct _mpu_raw * raw, struct _mpu_data * data)
     data->gyrox = raw->gyrox * GYRO_SCALE /* 2000 * (gyro._gx / 32768.0) */;
     data->gyroy = raw->gyroy * GYRO_SCALE /* 2000 * (gyro._gy / 32768.0) */;
     data->gyroz = raw->gyroz * GYRO_SCALE /* 2000 * (gyro._gz / 32768.0) */;
-#if 0
-    data->accx  = recursive_processing(&ax_recursive, data->accx);
-    data->accy  = recursive_processing(&ay_recursive, data->accy);
-    data->accz  = recursive_processing(&az_recursive, data->accz);
-#endif
+
+    mpu_sensor_data_filter(data);
 }
 
 void mpu_sensor_update_angle(struct _mpu_data * data, struct _angle * angle)
@@ -199,12 +197,10 @@ void mpu_sensor_update_attitude_angle(struct _mpu_data * mpu_data, struct _angle
         &angle->pitch, 
         &mpu_data->gyroy
     );
-#if 0
     kalman_filter(&yaw_kalman, 
         angle->yaw, 
         mpu_data->gyroz, 
         &angle->yaw, 
         &mpu_data->gyroz
     );
-#endif
 }

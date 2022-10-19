@@ -25,7 +25,7 @@ short ax_buf[ACC_FILTER_COUNT];
 short ay_buf[ACC_FILTER_COUNT];
 short az_buf[ACC_FILTER_COUNT];
 
-void acc_filter(struct _mpu_raw * raw)
+void mpu_acc_raw_filter(struct _mpu_raw * raw)
 {
     unsigned char i;
     int ax_sum = 0, ay_sum = 0, az_sum = 0; 
@@ -54,7 +54,7 @@ void acc_filter(struct _mpu_raw * raw)
 uint32_t mpu_update_task()
 {
     mpu_sensor_update_raw(&mpu_raw);
-    acc_filter(&mpu_raw);
+    mpu_acc_raw_filter(&mpu_raw);
     mpu_sensor_update_data(&mpu_raw, &mpu_data);
     mpu_sensor_update_angle(&mpu_data, &angle);
     mpu_sensor_update_attitude_angle(&mpu_data, &angle);
@@ -93,7 +93,7 @@ uint32_t bluetooth_control_task()
 
 uint32_t anotech_update_task()
 {
-#if 0
+#if 1
     send_sensor_data(
         mpu_raw.accx, mpu_raw.accy, mpu_raw.accz, 
         mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz
@@ -103,7 +103,7 @@ uint32_t anotech_update_task()
         mpu_raw.gyrox, mpu_raw.gyroy, mpu_raw.gyroz,
         (int)(angle.roll * 100),
         (int)(angle.pitch * 100),
-        (int)(angle.yaw * 10)
+        (int)(0.0/*angle.yaw*/ * 10)
     );
 #endif
 }
