@@ -12,22 +12,20 @@
 #include "qmc5883.h"
 // #include "drv_i2c_soft.h"
 
-#define QMC5883L_Addr   0x1A
-#define QMC5883L_HX_L   0x00
-#define QMC5883L_HX_H   0x01
-#define QMC5883L_HY_L   0x02
-#define QMC5883L_HY_H   0x03
-#define QMC5883L_HZ_L   0x04
-#define QMC5883L_HZ_H   0x05
-#define QMC5883L_CTR1   0x09
+#define QMC5883L_Addr     0x1A
+#define QMC5883L_HX_L     0x00
+#define QMC5883L_HX_H     0x01
+#define QMC5883L_HY_L     0x02
+#define QMC5883L_HY_H     0x03
+#define QMC5883L_HZ_L     0x04
+#define QMC5883L_HZ_H     0x05
+#define QMC5883L_CTR1     0x09
 #define QMC5883L_SRPERIOD 0x0B
 
-#define QMC_2G ((float)0.00008333f)  // 12000 LSB/G
-#define QMC_8G ((float)0.00033333f)  // 3000  LSB/G
+#define QMC_2G ((float)0.00008333f) // 12000 LSB/G
+#define QMC_8G ((float)0.00033333f) // 3000  LSB/G
 
 #define QMC5883_MAG_TO_GAUSS QMC_2G
-
-// static Vector3i_t magRaw;
 
 /**********************************************************************************************************
 *函 数 名: Soft_I2c_Single_Write
@@ -35,9 +33,8 @@
 *形    参: 设备号 从机地址 寄存器地址 写入数据
 *返 回 值: 写入状态
 **********************************************************************************************************/
-bool Soft_I2c_Single_Write(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_Address,uint8_t REG_data)
+bool Soft_I2c_Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)
 {
-#if 1
     // if(!Soft_I2c_Start(deviceNum))
     //     return false;
     qmc5883_i2c_start();
@@ -70,7 +67,7 @@ bool Soft_I2c_Single_Write(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_A
 
     // Soft_I2c_Stop(deviceNum);
     qmc5883_i2c_stop();
-#endif
+
     return true;
 }
 
@@ -80,10 +77,10 @@ bool Soft_I2c_Single_Write(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_A
 *形    参: 设备号 从机地址 寄存器地址
 *返 回 值: 读出数据
 **********************************************************************************************************/
-uint8_t Soft_I2C_Single_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_Address)
+uint8_t Soft_I2C_Single_Read(uint8_t SlaveAddress, uint8_t REG_Address)
 {
     uint8_t REG_data;
-#if 1
+
     // if(!Soft_I2c_Start(deviceNum))
     //     return false;
     qmc5883_i2c_start();
@@ -125,7 +122,7 @@ uint8_t Soft_I2C_Single_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG
 
     // Soft_I2c_Stop(deviceNum);
     qmc5883_i2c_stop();
-#endif
+
     return REG_data;
 }
 
@@ -135,10 +132,10 @@ uint8_t Soft_I2C_Single_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG
 *形    参: 设备号 从机地址 寄存器地址 读出缓冲区指针 读出长度
 *返 回 值: 读取状态
 **********************************************************************************************************/
-bool Soft_I2C_Multi_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_Address,uint8_t * ptChar,uint8_t size)
+bool Soft_I2C_Multi_Read(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t * ptChar, uint8_t size)
 {
     uint8_t i;
-#if 1
+
     if(size < 1)
         return false;
     // if(!Soft_I2c_Start(deviceNum))
@@ -202,7 +199,7 @@ bool Soft_I2C_Multi_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_Add
 
     // Soft_I2c_Stop(deviceNum);
     qmc5883_i2c_stop();
-#endif
+
     return true;
 }
 
@@ -214,7 +211,7 @@ bool Soft_I2C_Multi_Read(uint8_t deviceNum, uint8_t SlaveAddress,uint8_t REG_Add
 **********************************************************************************************************/
 static void QMC5883_WriteReg(uint8_t REG_Address, uint8_t REG_data)
 {
-    Soft_I2c_Single_Write(0/*MAG_I2C*/, QMC5883L_Addr, REG_Address, REG_data);
+    Soft_I2c_Single_Write(QMC5883L_Addr, REG_Address, REG_data);
 }
 
 /**********************************************************************************************************
@@ -225,7 +222,7 @@ static void QMC5883_WriteReg(uint8_t REG_Address, uint8_t REG_data)
 **********************************************************************************************************/
 static uint8_t QMC5883_ReadReg(uint8_t REG_Address)
 {
-    return Soft_I2C_Single_Read(0/*MAG_I2C*/, QMC5883L_Addr, REG_Address);
+    return Soft_I2C_Single_Read(QMC5883L_Addr, REG_Address);
 }
 
 /**********************************************************************************************************
@@ -236,7 +233,7 @@ static uint8_t QMC5883_ReadReg(uint8_t REG_Address)
 **********************************************************************************************************/
 static bool QMC5883_MultiRead(uint8_t REG_Address, uint8_t* buffer, uint8_t length)
 {
-    return Soft_I2C_Multi_Read(0/*MAG_I2C*/, QMC5883L_Addr, REG_Address, buffer, length);
+    return Soft_I2C_Multi_Read(QMC5883L_Addr, REG_Address, buffer, length);
 }
 
 /**********************************************************************************************************
@@ -248,7 +245,7 @@ static bool QMC5883_MultiRead(uint8_t REG_Address, uint8_t* buffer, uint8_t leng
 bool QMC5883_Detect(void)
 {
     QMC5883_WriteReg(QMC5883L_SRPERIOD, 0x01);
-    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D);  //2Guass 200Hz
+    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // 2Guass 200Hz
     sleep_ms(50);
 
     if(QMC5883_ReadReg(QMC5883L_CTR1) == 0x0D)
@@ -269,50 +266,23 @@ void QMC5883_Init(void)
 
     QMC5883_WriteReg(QMC5883L_SRPERIOD, 0x01);
     sleep_ms(5);
-    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D);  //2Guass 200Hz
-}
-
-/**********************************************************************************************************
-*函 数 名: QMC5883_Update
-*功能说明: QMC5883数据更新
-*形    参: 无
-*返 回 值: 无
-**********************************************************************************************************/
-void QMC5883_Update(void)
-{
-    uint8_t buffer[6];
-    short x, y, z;
-
-    if(!QMC5883_MultiRead(QMC5883L_HX_L, buffer, 6))
-        return;
-    
-    // magRaw.x = (int16_t)buffer[1] << 8 | buffer[0];
-    // magRaw.y = (int16_t)buffer[3] << 8 | buffer[2];
-    // magRaw.z = (int16_t)buffer[5] << 8 | buffer[4];   
-    
-    // //统一传感器坐标系（并非定义安装方向）
-    // magRaw.x = magRaw.x;
-    // magRaw.y = -magRaw.y;
-    // magRaw.z = magRaw.z;
-
-    x = (int16_t)buffer[1] << 8 | buffer[0];
-    y = (int16_t)buffer[3] << 8 | buffer[2];
-    z = (int16_t)buffer[5] << 8 | buffer[4];
-
-    info("x:%d, y:%d, z:%d", x, y, z);
+    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // 2Guass 200Hz
 }
 
 /**********************************************************************************************************
 *函 数 名: QMC5883_Read
-*功能说明: 读取地磁传感器数据,并转换为标准单位
+*功能说明: 读取地磁传感器数据
 *形    参: 读出数据指针
 *返 回 值: 无
 **********************************************************************************************************/
-void QMC5883_Read(/*Vector3f_t* mag*/)
+void QMC5883_Read(int16_t * mx, int16_t * my, int16_t * mz)
 {
-    // mag->x = magRaw.x * QMC5883_MAG_TO_GAUSS;
-    // mag->y = magRaw.y * QMC5883_MAG_TO_GAUSS;
-    // mag->z = magRaw.z * QMC5883_MAG_TO_GAUSS;
+    uint8_t buffer[6];
+    
+    if (!QMC5883_MultiRead(QMC5883L_HX_L, buffer, 6))
+        return;
+
+    *mx = (int16_t)buffer[1] << 8 | buffer[0];
+    *my = (int16_t)buffer[3] << 8 | buffer[2];
+    *mz = (int16_t)buffer[5] << 8 | buffer[4];
 }
-
-
