@@ -2,7 +2,10 @@
 #ifndef __QMC5883_CAL_H__
 #define __QMC5883_CAL_H__
 
+#include <math.h>
 #include "qmc5883.h"
+
+#define PI 3.1416f
 
 #define MAGX_BIAS 0
 #define MAGY_BIAS 0
