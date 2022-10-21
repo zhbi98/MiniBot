@@ -22,11 +22,6 @@
 #define QMC5883L_CTR1     0x09
 #define QMC5883L_SRPERIOD 0x0B
 
-#define QMC_2G ((float)0.00008333f) // 12000 LSB/G
-#define QMC_8G ((float)0.00033333f) // 3000  LSB/G
-
-#define QMC5883_MAG_TO_GAUSS QMC_2G
-
 /**********************************************************************************************************
 *函 数 名: Soft_I2c_Single_Write
 *功能说明: 单个寄存器写入
@@ -118,7 +113,7 @@ uint8_t Soft_I2C_Single_Read(uint8_t SlaveAddress, uint8_t REG_Address)
     REG_data = qmc5883_i2c_read_byte(0);
 
     // Soft_I2c_NoAck(deviceNum);
-    // qmc5883_i2c_nack(); // qmc5883_i2c_read_byte 支持发送 nack
+    // qmc5883_i2c_nack(); // qmc5883_i2c_read_byte(0) 内部支持发送 nack
 
     // Soft_I2c_Stop(deviceNum);
     qmc5883_i2c_stop();
@@ -190,11 +185,11 @@ bool Soft_I2C_Multi_Read(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t * pt
     for(i=1; i<size; i++)
     {
         // *ptChar++ = Soft_I2c_ReadByte(deviceNum);
-        // Soft_I2c_Ack(deviceNum);
+        // Soft_I2c_Ack(deviceNum); // qmc5883_i2c_read_byte(1) 内部支持发送 ack
         *ptChar++ = qmc5883_i2c_read_byte(1);
     }
     // *ptChar++ = Soft_I2c_ReadByte(deviceNum);
-    // Soft_I2c_NoAck(deviceNum);
+    // Soft_I2c_NoAck(deviceNum); // qmc5883_i2c_read_byte(0) 内部支持发送 nack
     *ptChar++ = qmc5883_i2c_read_byte(0);
 
     // Soft_I2c_Stop(deviceNum);
@@ -245,7 +240,7 @@ static bool QMC5883_MultiRead(uint8_t REG_Address, uint8_t* buffer, uint8_t leng
 bool QMC5883_Detect(void)
 {
     QMC5883_WriteReg(QMC5883L_SRPERIOD, 0x01);
-    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // 2Guass 200Hz
+    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // Full Range:2Guass, Output Data Rate:200Hz
     sleep_ms(50);
 
     if(QMC5883_ReadReg(QMC5883L_CTR1) == 0x0D)
@@ -266,7 +261,7 @@ void QMC5883_Init(void)
 
     QMC5883_WriteReg(QMC5883L_SRPERIOD, 0x01);
     sleep_ms(5);
-    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // 2Guass 200Hz
+    QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // Full Range:2Guass, Output Data Rate:200Hz
 }
 
 /**********************************************************************************************************

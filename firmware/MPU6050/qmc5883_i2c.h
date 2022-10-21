@@ -5,12 +5,12 @@
 #include "stm32f1xx_hal.h"
 #include "time.h"
 
-#define QMC5883_SCL_GPIO           GPIOB
-#define QMC5883_SCL_PIN            GPIO_PIN_10
+#define QMC5883_SCL_GPIO           GPIOA
+#define QMC5883_SCL_PIN            GPIO_PIN_7
 #define QMC5883_SCL_CLOCK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE();
 
-#define QMC5883_SDA_GPIO           GPIOB
-#define QMC5883_SDA_PIN            GPIO_PIN_11
+#define QMC5883_SDA_GPIO           GPIOA
+#define QMC5883_SDA_PIN            GPIO_PIN_6
 #define QMC5883_SDA_CLOCK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE();
 
 #define QMC5883_SDA_H()    HAL_GPIO_WritePin(QMC5883_SDA_GPIO, QMC5883_SDA_PIN, GPIO_PIN_SET)
