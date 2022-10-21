@@ -3,7 +3,7 @@
 
 static void qmc5883_sleep_us(unsigned int us)
 {
-    unsigned int i;
+    volatile unsigned int i;
 
     /**
      * precise delay is best for software i2c bus, but
