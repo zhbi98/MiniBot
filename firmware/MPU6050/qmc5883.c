@@ -261,6 +261,10 @@ void QMC5883_Init(void)
 
     QMC5883_WriteReg(QMC5883L_SRPERIOD, 0x01);
     sleep_ms(5);
+    QMC5883_WriteReg(QMC5883L_Addr, 0x20, 0x40);
+    sleep_ms(5);
+    QMC5883_WriteReg(QMC5883L_Addr, 0x21, 0x01);
+    sleep_ms(5);
     QMC5883_WriteReg(QMC5883L_CTR1, 0x0D); // Full Range:2Guass, Output Data Rate:200Hz
 }
 
