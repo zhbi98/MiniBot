@@ -49,8 +49,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/drivers/STM32F1xx_HAL_Driver/Inc/Legacy
     ${CMAKE_SOURCE_DIR}/main
     ${CMAKE_SOURCE_DIR}/MPU6050
-    ${CMAKE_SOURCE_DIR}/LV8731V
-    ${CMAKE_SOURCE_DIR}/CONTROLLER
+    ${CMAKE_SOURCE_DIR}/lv8731v
+    ${CMAKE_SOURCE_DIR}/ctrl
     ${CMAKE_SOURCE_DIR}/utils
 )
 add_definitions(-DUSE_HAL_DRIVER -D__MICROLIB -DSTM32F1 -DSTM32F1xx -DSTM32F103xB)
@@ -59,8 +59,8 @@ aux_source_directory(${CMAKE_SOURCE_DIR}/drivers/STM32F1xx_HAL_Driver/Src HAL_DR
 aux_source_directory(${CMAKE_SOURCE_DIR}/drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates SYSTEM)
 aux_source_directory(${CMAKE_SOURCE_DIR}/main MAIN)
 aux_source_directory(${CMAKE_SOURCE_DIR}/MPU6050 MPU)
-aux_source_directory(${CMAKE_SOURCE_DIR}/LV8731V LV8731V)
-aux_source_directory(${CMAKE_SOURCE_DIR}/CONTROLLER CONTROLLER)
+aux_source_directory(${CMAKE_SOURCE_DIR}/LV8731V lv8731v)
+aux_source_directory(${CMAKE_SOURCE_DIR}/CTRL ctrl)
 aux_source_directory(${CMAKE_SOURCE_DIR}/utils UTILS)
 
 set(STARTUP       ${CMAKE_SOURCE_DIR}/drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s)
@@ -70,7 +70,7 @@ add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR
 add_link_options(-mcpu=cortex-m3 -mthumb -mthumb-interwork)
 add_link_options(-T ${LINKER_SCRIPT})
 
-add_executable(${PROJECT_NAME}.elf ${HAL_DRIVER} ${SYSTEM} ${MAIN} ${STARTUP} ${MPU} ${LV8731V} ${CONTROLLER} ${UTILS} ${LINKER_SCRIPT})
+add_executable(${PROJECT_NAME}.elf ${HAL_DRIVER} ${SYSTEM} ${MAIN} ${STARTUP} ${MPU} ${LV8731V} ${CTRL} ${UTILS} ${LINKER_SCRIPT})
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
